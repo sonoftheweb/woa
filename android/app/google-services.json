@@ -1,0 +1,46 @@
+{
+  "project_info": {
+    "project_number": "629141750196",
+    "project_id": "workout-application-fltr",
+    "storage_bucket": "workout-application-fltr.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:629141750196:android:b2f2fe6cd48804b97db2e1",
+        "android_client_info": {
+          "package_name": "com.example.woa"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "629141750196-uol1pjos19s3no16ci8s3jpj968s08hp.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyC3QxFLaAB2sN0uyMNDy46IxU8JkgGkYvE"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "629141750196-uol1pjos19s3no16ci8s3jpj968s08hp.apps.googleusercontent.com",
+              "client_type": 3
+            },
+            {
+              "client_id": "629141750196-dtocojrfsu0loputs1q8q16oulic54ak.apps.googleusercontent.com",
+              "client_type": 2,
+              "ios_info": {
+                "bundle_id": "com.example.woa"
+              }
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

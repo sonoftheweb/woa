@@ -1,6 +1,9 @@
+import 'package:firebase_core/firebase_core.dart';
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
 
+import 'firebase_options.dart';
 import 'navigation/Menu.dart';
 import 'theme/themed.dart';
 
@@ -12,14 +15,35 @@ Future<void> main() async {
 
 class MyApp extends StatelessWidget {
   final ThemeData? themeData;
-  const MyApp({Key? key, this.themeData}) : super(key: key);
+  MyApp({Key? key, this.themeData}) : super(key: key);
+
+  final Future<FirebaseApp> _fbApp = Firebase.initializeApp(
+    options: DefaultFirebaseOptions.currentPlatform,
+  );
 
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
       title: 'Flutter Demo',
       theme: themeData ?? ThemeData.dark(),
-      home: const MyHomePage(title: 'Flutter Demo Home Page'),
+      home: FutureBuilder(
+        future: _fbApp,
+        builder: (BuildContext context, AsyncSnapshot<FirebaseApp> snapshot) {
+          if (snapshot.hasError) {
+            if (kDebugMode) {
+              print('Something went wrong ${snapshot.error.toString()}');
+            }
+            return const Text('Something went wrong!');
+          } else if (snapshot.hasData) {
+            return const MyHomePage(title: 'Flutter Demo Home Page');
+          } else {
+            return const Center(
+              child: CircularProgressIndicator(),
+            );
+          }
+          //const MyHomePage(title: 'Flutter Demo Home Page')
+        },
+      ),
     );
   }
 }
