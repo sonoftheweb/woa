@@ -22,6 +22,25 @@ class MyApp extends StatelessWidget {
       home: FutureBuilder(
         future: _fbApp,
         builder: (BuildContext context, AsyncSnapshot<FirebaseApp> snapshot) {
+          switch (snapshot.connectionState) {
+            case ConnectionState.done:
+              if (snapshot.hasError) {
+                if (kDebugMode) {
+                  print('Something went wrong ${snapshot.error.toString()}');
+                }
+                return const Center(
+                  child: Text('Something went wrong...'),
+                );
+              } else if (snapshot.hasData) {
+                return const MyHomePage(title: 'Flutter Demo Home Page');
+              }
+              break;
+            default:
+              return const Center(
+                child: Text('Loading...'),
+              );
+          }
+
           if (snapshot.hasError) {
             if (kDebugMode) {
               print('Something went wrong ${snapshot.error.toString()}');

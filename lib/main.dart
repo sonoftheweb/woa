@@ -1,15 +1,40 @@
+import 'package:firebase_core/firebase_core.dart';
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
 
+import 'firebase_options.dart';
+import 'navigation/Menu.dart';
 import 'pages/Registration.dart';
 import 'theme/themed.dart';
 
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
   ThemeData themeData = await initThemeData();
+
+  final Future<FirebaseApp> _fbApp = Firebase.initializeApp(
+    options: DefaultFirebaseOptions.currentPlatform,
+  );
+
   runApp(MaterialApp(
     theme: themeData,
-    home: const HomePage(),
+    home: FutureBuilder(
+      future: _fbApp,
+      builder: (BuildContext context, AsyncSnapshot<FirebaseApp> snapshot) {
+        if (snapshot.hasError) {
+          if (kDebugMode) {
+            print('Something went wrong ${snapshot.error.toString()}');
+          }
+          return const Text('Something went wrong!');
+        } else if (snapshot.hasData) {
+          return const HomePage();
+        } else {
+          return const Center(
+            child: CircularProgressIndicator(),
+          );
+        }
+      },
+    ),
   ));
 }
 
@@ -40,6 +65,7 @@ class HomePage extends StatelessWidget {
         ),
       ),
       body: const RegistrationPage(),
+      drawer: const NavigationDrawer(),
     );
   }
 }
