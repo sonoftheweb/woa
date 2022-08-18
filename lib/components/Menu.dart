@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 
-import 'side_nav.dart';
+import '../components/side_nav.dart';
 
 class NavigationDrawer extends StatelessWidget {
   const NavigationDrawer({Key? key}) : super(key: key);

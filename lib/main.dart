@@ -1,11 +1,12 @@
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_svg/svg.dart';
+import 'package:woa/pages/Login.dart';
+import 'package:woa/pages/VerifyEmail.dart';
 
+import 'components/ErrorMessageWidget.dart';
 import 'firebase_options.dart';
-import 'navigation/Menu.dart';
-import 'pages/Registration.dart';
 import 'theme/themed.dart';
 
 Future<void> main() async {
@@ -22,10 +23,7 @@ Future<void> main() async {
       future: _fbApp,
       builder: (BuildContext context, AsyncSnapshot<FirebaseApp> snapshot) {
         if (snapshot.hasError) {
-          if (kDebugMode) {
-            print('Something went wrong ${snapshot.error.toString()}');
-          }
-          return const Text('Something went wrong!');
+          return FailureWidget(consoleMessage: snapshot.error.toString());
         } else if (snapshot.hasData) {
           return const HomePage();
         } else {
@@ -43,7 +41,16 @@ class HomePage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
+    Widget beginAt = const LoginPage();
+    final User? currentUser = FirebaseAuth.instance.currentUser;
+    print(currentUser);
+    if (currentUser != null) {
+      if (!currentUser.emailVerified) beginAt = const VerifyEmailPage();
+    }
+
+    return beginAt;
+
+    /*return Scaffold(
       appBar: AppBar(
         automaticallyImplyLeading: false,
         elevation: 0.0,
@@ -64,8 +71,8 @@ class HomePage extends StatelessWidget {
           ),
         ),
       ),
-      body: const RegistrationPage(),
+      body: beginAt,
       drawer: const NavigationDrawer(),
-    );
+    );*/
   }
 }

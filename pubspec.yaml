@@ -66,6 +66,7 @@ flutter:
   assets:
     - assets/style.json
     - assets/drawer.svg
+    - assets/5e535a2b8e24938384074dac_peep-73.svg
 
   # An image asset can refer to one or more resolution-specific "variants", see
   # https://flutter.dev/assets-and-images/#resolution-aware

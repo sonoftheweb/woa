@@ -3,8 +3,8 @@ import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
 
+import '../components/Menu.dart';
 import '../firebase_options.dart';
-import '../navigation/Menu.dart';
 
 class MyApp extends StatelessWidget {
   final ThemeData? themeData;
