@@ -2,7 +2,7 @@ import 'package:email_validator/email_validator.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:woa/components/FormTitleWidget.dart';
-import 'package:woa/pages/Registration.dart';
+import 'package:woa/constants/routes.dart';
 
 class LoginPage extends StatefulWidget {
   const LoginPage({Key? key}) : super(key: key);
@@ -37,7 +37,7 @@ class _LoginPageState extends State<LoginPage> {
         child: Form(
           key: _loginFormKey,
           child: Padding(
-            padding: const EdgeInsets.only(left: 30.0, right: 30.0, top: 200.0),
+            padding: const EdgeInsets.only(left: 30.0, right: 30.0, top: 150.0),
             child: Column(
               children: [
                 const Center(
@@ -118,10 +118,19 @@ class _LoginPageState extends State<LoginPage> {
                       try {
                         final email = _email.text;
                         final password = _password.text;
-                        final userCredentials = await FirebaseAuth.instance
-                            .signInWithEmailAndPassword(
-                                email: email, password: password);
-                        print(userCredentials);
+                        await FirebaseAuth.instance.signInWithEmailAndPassword(
+                            email: email, password: password);
+
+                        String page = dashboardRoute;
+                        final user = FirebaseAuth.instance.currentUser;
+                        await user?.reload();
+
+                        if (user?.emailVerified == false) page = verifyRoute;
+
+                        Navigator.of(context).pushNamedAndRemoveUntil(
+                          page,
+                          (route) => false,
+                        );
                       } on FirebaseAuthException catch (e) {
                         if (_errors.containsKey(e.code)) {
                           setState(() {
@@ -154,12 +163,7 @@ class _LoginPageState extends State<LoginPage> {
                 ),
                 TextButton(
                   onPressed: () {
-                    Navigator.push(
-                      context,
-                      MaterialPageRoute(
-                        builder: (context) => const RegistrationPage(),
-                      ),
-                    );
+                    Navigator.of(context).pushNamed(registerRoute);
                   },
                   style: TextButton.styleFrom(primary: Colors.white),
                   child: const Text('Register'),

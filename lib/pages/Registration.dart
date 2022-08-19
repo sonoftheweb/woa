@@ -1,6 +1,7 @@
 import 'package:email_validator/email_validator.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+import 'package:woa/constants/routes.dart';
 
 import '../components/FormTitleWidget.dart';
 
@@ -44,7 +45,7 @@ class _RegistrationPageState extends State<RegistrationPage> {
         child: Form(
           key: _formKey,
           child: Padding(
-            padding: const EdgeInsets.only(left: 30.0, right: 30.0, top: 200.0),
+            padding: const EdgeInsets.only(left: 30.0, right: 30.0, top: 150.0),
             child: Column(
               children: [
                 const Center(
@@ -144,11 +145,12 @@ class _RegistrationPageState extends State<RegistrationPage> {
                       try {
                         final email = _email.text;
                         final password = _password.text;
-                        final userCredentials = await FirebaseAuth.instance
+                        final userCreds = await FirebaseAuth.instance
                             .createUserWithEmailAndPassword(
-                                email: email, password: password);
-
-                        print(userCredentials);
+                                email: email, password: password)
+                            .then((value) {
+                          Navigator.of(context).pushNamed(verifyRoute);
+                        });
                       } on FirebaseAuthException catch (e) {
                         if (_errors.containsKey(e.code)) {
                           setState(() {
@@ -181,7 +183,10 @@ class _RegistrationPageState extends State<RegistrationPage> {
                 ),
                 TextButton(
                   onPressed: () {
-                    Navigator.pop(context);
+                    Navigator.of(context).pushNamedAndRemoveUntil(
+                      loginRoute,
+                      (route) => false,
+                    );
                   },
                   style: TextButton.styleFrom(primary: Colors.white),
                   child: const Text('Sign In'),
