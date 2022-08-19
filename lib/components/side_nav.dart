@@ -1,6 +1,6 @@
-import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:woa/constants/routes.dart';
+import 'package:woa/services/auth/auth_service.dart';
 
 class SideNavMenuItems {
   BuildContext context;
@@ -49,13 +49,12 @@ class SideNavMenuItems {
           ListTile(
             leading: const Icon(Icons.logout),
             title: Text('logout'.toUpperCase()),
-            onTap: () {
-              FirebaseAuth.instance.signOut().then(
-                    (value) => Navigator.of(context).pushNamedAndRemoveUntil(
-                      loginRoute,
-                      (route) => false,
-                    ),
-                  );
+            onTap: () async {
+              await AuthService.firebase().logOut();
+              Navigator.of(context).pushNamedAndRemoveUntil(
+                loginRoute,
+                (route) => false,
+              );
             },
           ),
         ],

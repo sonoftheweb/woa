@@ -1,12 +1,10 @@
-import 'package:firebase_auth/firebase_auth.dart';
-import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'package:woa/constants/routes.dart';
 import 'package:woa/pages/Login.dart';
 import 'package:woa/pages/Registration.dart';
 import 'package:woa/pages/VerifyEmail.dart';
+import 'package:woa/services/auth/auth_service.dart';
 
-import 'firebase_options.dart';
 import 'pages/DashboardPage.dart';
 import 'theme/themed.dart';
 
@@ -17,14 +15,11 @@ Future<void> main() async {
   runApp(MaterialApp(
     theme: themeData,
     home: FutureBuilder(
-      future: Firebase.initializeApp(
-        options: DefaultFirebaseOptions.currentPlatform,
-      ),
-      builder: (BuildContext context, AsyncSnapshot<FirebaseApp> snapshot) {
+      future: AuthService.firebase().initialize(),
+      builder: (context, snapshot) {
         switch (snapshot.connectionState) {
           case ConnectionState.done:
-            User? user = FirebaseAuth.instance.currentUser;
-            user?.reload();
+            final user = AuthService.firebase().currentUser;
             if (user != null) {
               return const Dashboard();
             } else {

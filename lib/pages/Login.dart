@@ -1,8 +1,10 @@
 import 'package:email_validator/email_validator.dart';
-import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:woa/components/FormTitleWidget.dart';
 import 'package:woa/constants/routes.dart';
+import 'package:woa/services/auth/auth_service.dart';
+
+import '../services/auth/auth_exceptions.dart';
 
 class LoginPage extends StatefulWidget {
   const LoginPage({Key? key}) : super(key: key);
@@ -118,30 +120,28 @@ class _LoginPageState extends State<LoginPage> {
                       try {
                         final email = _email.text;
                         final password = _password.text;
-                        await FirebaseAuth.instance.signInWithEmailAndPassword(
-                            email: email, password: password);
 
-                        String page = dashboardRoute;
-                        final user = FirebaseAuth.instance.currentUser;
-                        await user?.reload();
+                        await AuthService.firebase().logIn(
+                          email: email,
+                          password: password,
+                        );
 
-                        if (user?.emailVerified == false) page = verifyRoute;
+                        final user = AuthService.firebase().currentUser;
+
+                        String page = (user?.isEmailVerified ?? false)
+                            ? dashboardRoute
+                            : verifyRoute;
 
                         Navigator.of(context).pushNamedAndRemoveUntil(
                           page,
                           (route) => false,
                         );
-                      } on FirebaseAuthException catch (e) {
-                        if (_errors.containsKey(e.code)) {
-                          setState(() {
-                            _error = _errors[e.code];
-                          });
-                        } else {
-                          setState(() {
-                            _error =
-                                'Something unexpected happened. Please contact the developer.';
-                          });
-                        }
+                      } on UserNotFoundAuthException {
+                        _error = _errors['user-not-found'];
+                      } on WrongPasswordAuthException {
+                        _error = _errors['wrong-password'];
+                      } on GenericAuthException {
+                        _error = 'Authentication error';
                       }
                     }
                   },

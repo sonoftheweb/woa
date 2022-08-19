@@ -1,7 +1,7 @@
-import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:woa/constants/routes.dart';
+import 'package:woa/services/auth/auth_service.dart';
 
 class VerifyEmailPage extends StatelessWidget {
   const VerifyEmailPage({Key? key}) : super(key: key);
@@ -31,14 +31,11 @@ class VerifyEmailPage extends StatelessWidget {
               ),
               ElevatedButton(
                 onPressed: () async {
-                  User? user = FirebaseAuth.instance.currentUser;
-                  await user?.sendEmailVerification().then((value) async {
-                    await FirebaseAuth.instance.signOut().then((value) =>
-                        Navigator.of(context).pushNamedAndRemoveUntil(
-                          loginRoute,
-                          (route) => false,
-                        ));
-                  });
+                  await AuthService.firebase().sendEmailVerification();
+                  Navigator.of(context).pushNamedAndRemoveUntil(
+                    loginRoute,
+                    (route) => false,
+                  );
                 },
                 child: const Text('Resend verification email'),
               ),

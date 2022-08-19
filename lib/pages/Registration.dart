@@ -1,9 +1,10 @@
 import 'package:email_validator/email_validator.dart';
-import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:woa/constants/routes.dart';
+import 'package:woa/services/auth/auth_service.dart';
 
 import '../components/FormTitleWidget.dart';
+import '../services/auth/auth_exceptions.dart';
 
 class RegistrationPage extends StatefulWidget {
   const RegistrationPage({Key? key}) : super(key: key);
@@ -59,6 +60,18 @@ class _RegistrationPageState extends State<RegistrationPage> {
                       textAlign: TextAlign.center,
                     ),
                   ),
+                ),
+                Padding(
+                  padding: const EdgeInsets.only(top: 15.0, bottom: 15.0),
+                  child: (_error != null)
+                      ? Text(
+                          _error!,
+                          textAlign: TextAlign.center,
+                          style: const TextStyle(
+                            color: Colors.red,
+                          ),
+                        )
+                      : null,
                 ),
                 Padding(
                   padding: const EdgeInsets.only(top: 100.0, bottom: 20.0),
@@ -145,23 +158,21 @@ class _RegistrationPageState extends State<RegistrationPage> {
                       try {
                         final email = _email.text;
                         final password = _password.text;
-                        final userCreds = await FirebaseAuth.instance
-                            .createUserWithEmailAndPassword(
-                                email: email, password: password)
-                            .then((value) {
-                          Navigator.of(context).pushNamed(verifyRoute);
-                        });
-                      } on FirebaseAuthException catch (e) {
-                        if (_errors.containsKey(e.code)) {
-                          setState(() {
-                            _error = _errors[e.code];
-                          });
-                        } else {
-                          setState(() {
-                            _error =
-                                'Something unexpected happened. Please contact the developer.';
-                          });
-                        }
+
+                        AuthService.firebase().createUser(
+                          email: email,
+                          password: password,
+                        );
+
+                        Navigator.of(context).pushNamed(verifyRoute);
+                      } on WeakPasswordAuthException {
+                        _error = _errors['weak-password'];
+                      } on EmailAlreadyInUseAuthException {
+                        _error = _errors['email-already-in-use'];
+                      } on InvalidEmailAuthException {
+                        _error = _errors['invalid-email'];
+                      } on GenericAuthException {
+                        _error = 'Error occurred during registration.';
                       }
                     }
                   },
