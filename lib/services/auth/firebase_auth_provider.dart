@@ -48,8 +48,8 @@ class FirebaseAuthProvider implements AuthProvider {
   @override
   AuthUser? get currentUser {
     final user = FirebaseAuth.instance.currentUser;
+    //print(user);
     if (user != null) {
-      user.sendEmailVerification();
       return AuthUser.fromFirebase(user);
     } else {
       return null;
