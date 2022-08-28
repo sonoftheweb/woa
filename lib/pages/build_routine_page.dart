@@ -16,7 +16,7 @@ class _BuildRoutinePageState extends State<BuildRoutinePage> {
   int triceps = 0;
   int chest = 0;
   int abdomen = 0;
-  int trapeziums = 0;
+  int trapezius = 0;
   int upperBack = 0;
   int lowerBack = 0;
   int glutes = 0;
@@ -43,7 +43,7 @@ class _BuildRoutinePageState extends State<BuildRoutinePage> {
           children: [
             Center(
               child: SizedBox(
-                width: 350,
+                width: 200,
                 child: Column(
                   children: [
                     const SizedBox(height: 30.0),
@@ -52,12 +52,12 @@ class _BuildRoutinePageState extends State<BuildRoutinePage> {
                         Center(
                           child: Image.asset(
                             'assets/images/bodmap.png',
-                            width: 350,
+                            width: 200,
                           ),
                         ),
                         Positioned(
-                          top: 115,
-                          left: 100,
+                          top: 60,
+                          left: 33,
                           child: ClipOval(
                             child: Container(
                               width: 10,
@@ -67,8 +67,8 @@ class _BuildRoutinePageState extends State<BuildRoutinePage> {
                           ),
                         ), // Chest
                         Positioned(
-                          top: 115,
-                          left: 60,
+                          top: 60,
+                          left: 55,
                           child: ClipOval(
                             child: Container(
                               width: 10,
@@ -78,8 +78,8 @@ class _BuildRoutinePageState extends State<BuildRoutinePage> {
                           ),
                         ), // Chest
                         Positioned(
-                          top: 135,
-                          left: 30,
+                          top: 100,
+                          left: 50,
                           child: ClipOval(
                             child: Container(
                               width: 10,
@@ -89,8 +89,8 @@ class _BuildRoutinePageState extends State<BuildRoutinePage> {
                           ),
                         ), // Left Bicep
                         Positioned(
-                          top: 135,
-                          left: 130,
+                          top: 100,
+                          left: 38,
                           child: ClipOval(
                             child: Container(
                               width: 10,
@@ -356,6 +356,129 @@ class _BuildRoutinePageState extends State<BuildRoutinePage> {
                           onChanged: (value) {
                             setState(() {
                               abdomen = int.parse(value.replaceAll(',', ''));
+                            });
+                          }),
+                    ),
+                  ],
+                ),
+              ),
+            ),
+            Center(
+              child: SizedBox(
+                width: 350,
+                child: Row(
+                  children: <Widget>[
+                    Expanded(
+                      child: QuantityInput(
+                          label: 'Trapezius',
+                          buttonColor: const Color.fromRGBO(57, 180, 120, 1),
+                          value: trapezius,
+                          acceptsZero: true,
+                          maxValue: 10,
+                          decoration: const InputDecoration(
+                            border: OutlineInputBorder(),
+                          ),
+                          onChanged: (value) {
+                            setState(() {
+                              trapezius = int.parse(value.replaceAll(',', ''));
+                            });
+                          }),
+                    ),
+                    Expanded(
+                      child: QuantityInput(
+                          label: 'Upper Back',
+                          buttonColor: const Color.fromRGBO(57, 180, 120, 1),
+                          value: upperBack,
+                          acceptsZero: true,
+                          maxValue: 10,
+                          decoration: const InputDecoration(
+                            border: OutlineInputBorder(),
+                          ),
+                          onChanged: (value) {
+                            setState(() {
+                              upperBack = int.parse(value.replaceAll(',', ''));
+                            });
+                          }),
+                    ),
+                  ],
+                ),
+              ),
+            ),
+            Center(
+              child: SizedBox(
+                width: 350,
+                child: Row(
+                  children: <Widget>[
+                    Expanded(
+                      child: QuantityInput(
+                          label: 'Lower Back',
+                          buttonColor: const Color.fromRGBO(57, 180, 120, 1),
+                          value: lowerBack,
+                          acceptsZero: true,
+                          maxValue: 10,
+                          decoration: const InputDecoration(
+                            border: OutlineInputBorder(),
+                          ),
+                          onChanged: (value) {
+                            setState(() {
+                              lowerBack = int.parse(value.replaceAll(',', ''));
+                            });
+                          }),
+                    ),
+                    Expanded(
+                      child: QuantityInput(
+                          label: 'Glutes',
+                          buttonColor: const Color.fromRGBO(57, 180, 120, 1),
+                          value: glutes,
+                          acceptsZero: true,
+                          maxValue: 10,
+                          decoration: const InputDecoration(
+                            border: OutlineInputBorder(),
+                          ),
+                          onChanged: (value) {
+                            setState(() {
+                              glutes = int.parse(value.replaceAll(',', ''));
+                            });
+                          }),
+                    ),
+                  ],
+                ),
+              ),
+            ),
+            Center(
+              child: SizedBox(
+                width: 350,
+                child: Row(
+                  children: <Widget>[
+                    Expanded(
+                      child: QuantityInput(
+                          label: 'Quadriceps',
+                          buttonColor: const Color.fromRGBO(57, 180, 120, 1),
+                          value: quadriceps,
+                          acceptsZero: true,
+                          maxValue: 10,
+                          decoration: const InputDecoration(
+                            border: OutlineInputBorder(),
+                          ),
+                          onChanged: (value) {
+                            setState(() {
+                              quadriceps = int.parse(value.replaceAll(',', ''));
+                            });
+                          }),
+                    ),
+                    Expanded(
+                      child: QuantityInput(
+                          label: 'Hamstrings',
+                          buttonColor: const Color.fromRGBO(57, 180, 120, 1),
+                          value: hamstring,
+                          acceptsZero: true,
+                          maxValue: 10,
+                          decoration: const InputDecoration(
+                            border: OutlineInputBorder(),
+                          ),
+                          onChanged: (value) {
+                            setState(() {
+                              hamstring = int.parse(value.replaceAll(',', ''));
                             });
                           }),
                     ),
