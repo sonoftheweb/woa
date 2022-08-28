@@ -3,7 +3,8 @@ import 'package:flutter_svg/svg.dart';
 import 'package:woa/components/previous_workout_widget.dart';
 import 'package:woa/services/auth/auth_service.dart';
 
-import '../components/Menu.dart';
+import '../components/menu.dart';
+import '../utils.dart';
 
 class Dashboard extends StatefulWidget {
   const Dashboard({Key? key}) : super(key: key);
@@ -16,6 +17,7 @@ class _DashboardState extends State<Dashboard> {
   @override
   Widget build(BuildContext context) {
     final user = AuthService.firebase().currentUser;
+    checkAuth(user, context);
     String? name = user?.displayName ?? user?.email;
 
     return Scaffold(

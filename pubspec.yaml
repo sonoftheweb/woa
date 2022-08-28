@@ -39,6 +39,8 @@ dependencies:
   firebase_core: ^1.20.1
   firebase_auth: ^3.6.3
   email_validator: ^2.1.17
+  floating_action_bubble: ^1.1.4
+  quantity_input: ^1.0.2
 
 dev_dependencies:
   flutter_test:
@@ -67,6 +69,7 @@ flutter:
     - assets/style.json
     - assets/drawer.svg
     - assets/5e535a2b8e24938384074dac_peep-73.svg
+    - assets/images/
 
   # An image asset can refer to one or more resolution-specific "variants", see
   # https://flutter.dev/assets-and-images/#resolution-aware

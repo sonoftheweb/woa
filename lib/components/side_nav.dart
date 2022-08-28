@@ -26,8 +26,8 @@ class SideNavMenuItems {
       ),
       ListTile(
         leading: const Icon(Icons.edit_note_outlined),
-        title: Text('workout plans'.toUpperCase()),
-        onTap: () => {},
+        title: Text('library'.toUpperCase()),
+        onTap: () => {Navigator.of(context).pushNamed(libraryRoute)},
       ),
       ListTile(
         leading: const Icon(Icons.settings_outlined),

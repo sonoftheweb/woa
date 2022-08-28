@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:woa/utils.dart';
 
 class PreviousWorkoutWidget extends StatelessWidget {
   const PreviousWorkoutWidget({
@@ -8,12 +9,26 @@ class PreviousWorkoutWidget extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Column(
-      children: const [
-        PreviousWorkoutHeaderWidget(
+      children: [
+        const PreviousWorkoutHeaderWidget(
           date: 'Mon, May 11',
           title: 'CHEST & TRICEPS',
         ),
-        PreviousWorkoutBodyWidget()
+        const PreviousWorkoutBodyWidget(),
+        const SizedBox(
+          height: 20.0,
+        ),
+        ElevatedButton(
+          onPressed: () {},
+          style: ElevatedButton.styleFrom(
+            primary: Colors.green.shade500,
+            padding: const EdgeInsets.symmetric(
+              horizontal: 60,
+              vertical: 20,
+            ),
+          ),
+          child: Text('See all previous workout'),
+        )
       ],
     );
   }
@@ -137,7 +152,7 @@ class VerticalSingleLineGraphWidget extends StatelessWidget {
                 width: 20.0,
                 height: 20.0,
                 decoration: BoxDecoration(
-                  color: Colors.green[800],
+                  color: darken(verticalSingleLineGraphColor(reps * 10), 0.1),
                   borderRadius: const BorderRadius.all(
                     Radius.circular(20),
                   ),
@@ -171,15 +186,15 @@ class VerticalSingleLineGraphWidget extends StatelessWidget {
     );
   }
 
-  Color? verticalSingleLineGraphColor(int value) {
+  Color verticalSingleLineGraphColor(int value) {
     if (value >= 90) {
-      return Colors.green;
+      return const Color.fromRGBO(57, 180, 120, 1);
     } else if (value >= 60 && value < 90) {
-      return Colors.lightGreen;
+      return const Color.fromRGBO(152, 186, 64, 1);
     } else if (value >= 50 && value < 60) {
-      return Colors.lime;
+      return const Color.fromRGBO(154, 143, 36, 1);
     } else {
-      return Colors.red[300];
+      return const Color.fromRGBO(191, 81, 104, 1);
     }
   }
 }

@@ -3,7 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:woa/constants/routes.dart';
 import 'package:woa/services/auth/auth_service.dart';
 
-import '../components/FormTitleWidget.dart';
+import '../components/form_title_widget.dart';
 import '../services/auth/auth_exceptions.dart';
 
 class RegistrationPage extends StatefulWidget {

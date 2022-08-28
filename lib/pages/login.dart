@@ -1,6 +1,6 @@
 import 'package:email_validator/email_validator.dart';
 import 'package:flutter/material.dart';
-import 'package:woa/components/FormTitleWidget.dart';
+import 'package:woa/components/form_title_widget.dart';
 import 'package:woa/constants/routes.dart';
 import 'package:woa/services/auth/auth_service.dart';
 
