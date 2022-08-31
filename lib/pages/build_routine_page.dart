@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:quantity_input/quantity_input.dart';
+import 'package:woa/pages/build_routine_page_2.dart';
 
 import '../services/auth/auth_service.dart';
 import '../utils.dart';
@@ -16,6 +17,8 @@ class _BuildRoutinePageState extends State<BuildRoutinePage> {
   int triceps = 0;
   int chest = 0;
   int abdomen = 0;
+  int thigh = 0;
+  int calf = 0;
   int trapezius = 0;
   int upperBack = 0;
   int lowerBack = 0;
@@ -46,7 +49,7 @@ class _BuildRoutinePageState extends State<BuildRoutinePage> {
                 width: 250,
                 child: Column(
                   children: [
-                    const SizedBox(height: 20.0),
+                    const SizedBox(height: 10.0),
                     Stack(
                       children: [
                         Center(
@@ -60,7 +63,10 @@ class _BuildRoutinePageState extends State<BuildRoutinePage> {
                           left: 41,
                           child: ClipOval(
                             child: Container(
-                                width: 10, height: 10, color: Colors.white),
+                              width: 10,
+                              height: 10,
+                              color: pointsColor(chest),
+                            ),
                           ),
                         ), // Chest
                         Positioned(
@@ -68,7 +74,10 @@ class _BuildRoutinePageState extends State<BuildRoutinePage> {
                           left: 69,
                           child: ClipOval(
                             child: Container(
-                                width: 10, height: 10, color: Colors.white),
+                              width: 10,
+                              height: 10,
+                              color: pointsColor(chest),
+                            ),
                           ),
                         ), // Chest
                         Positioned(
@@ -78,7 +87,7 @@ class _BuildRoutinePageState extends State<BuildRoutinePage> {
                             child: Container(
                               width: 10,
                               height: 10,
-                              color: Colors.white,
+                              color: pointsColor(biceps),
                             ),
                           ),
                         ), // Left Bicep
@@ -89,7 +98,7 @@ class _BuildRoutinePageState extends State<BuildRoutinePage> {
                             child: Container(
                               width: 10,
                               height: 10,
-                              color: Colors.white,
+                              color: pointsColor(biceps),
                             ),
                           ),
                         ), // Right Bicep
@@ -100,7 +109,7 @@ class _BuildRoutinePageState extends State<BuildRoutinePage> {
                             child: Container(
                               width: 10,
                               height: 10,
-                              color: Colors.white,
+                              color: pointsColor(abdomen),
                             ),
                           ),
                         ), // Abdomen
@@ -111,7 +120,7 @@ class _BuildRoutinePageState extends State<BuildRoutinePage> {
                             child: Container(
                               width: 10,
                               height: 10,
-                              color: Colors.white,
+                              color: pointsColor(abdomen),
                             ),
                           ),
                         ), // Abdomen
@@ -122,7 +131,7 @@ class _BuildRoutinePageState extends State<BuildRoutinePage> {
                             child: Container(
                               width: 10,
                               height: 10,
-                              color: Colors.white,
+                              color: pointsColor(thigh),
                             ),
                           ),
                         ), // Thigh
@@ -133,7 +142,7 @@ class _BuildRoutinePageState extends State<BuildRoutinePage> {
                             child: Container(
                               width: 10,
                               height: 10,
-                              color: Colors.white,
+                              color: pointsColor(thigh),
                             ),
                           ),
                         ), // Thigh
@@ -144,7 +153,7 @@ class _BuildRoutinePageState extends State<BuildRoutinePage> {
                             child: Container(
                               width: 10,
                               height: 10,
-                              color: Colors.white,
+                              color: pointsColor(calf),
                             ),
                           ),
                         ), // Calf
@@ -155,7 +164,7 @@ class _BuildRoutinePageState extends State<BuildRoutinePage> {
                             child: Container(
                               width: 10,
                               height: 10,
-                              color: Colors.white,
+                              color: pointsColor(calf),
                             ),
                           ),
                         ), // Calf
@@ -166,7 +175,7 @@ class _BuildRoutinePageState extends State<BuildRoutinePage> {
                             child: Container(
                               width: 10,
                               height: 10,
-                              color: Colors.white,
+                              color: pointsColor(hamstring),
                             ),
                           ),
                         ), // Hamstrings
@@ -177,7 +186,7 @@ class _BuildRoutinePageState extends State<BuildRoutinePage> {
                             child: Container(
                               width: 10,
                               height: 10,
-                              color: Colors.white,
+                              color: pointsColor(hamstring),
                             ),
                           ),
                         ), // Hamstrings
@@ -188,7 +197,7 @@ class _BuildRoutinePageState extends State<BuildRoutinePage> {
                             child: Container(
                               width: 10,
                               height: 10,
-                              color: Colors.white,
+                              color: pointsColor(glutes),
                             ),
                           ),
                         ), // Glutes
@@ -199,7 +208,7 @@ class _BuildRoutinePageState extends State<BuildRoutinePage> {
                             child: Container(
                               width: 10,
                               height: 10,
-                              color: Colors.white,
+                              color: pointsColor(glutes),
                             ),
                           ),
                         ), // Glutes
@@ -210,7 +219,7 @@ class _BuildRoutinePageState extends State<BuildRoutinePage> {
                             child: Container(
                               width: 10,
                               height: 10,
-                              color: Colors.white,
+                              color: pointsColor(lowerBack),
                             ),
                           ),
                         ), // Lower Back
@@ -221,7 +230,7 @@ class _BuildRoutinePageState extends State<BuildRoutinePage> {
                             child: Container(
                               width: 10,
                               height: 10,
-                              color: Colors.white,
+                              color: pointsColor(lowerBack),
                             ),
                           ),
                         ), // Lower Back
@@ -232,7 +241,7 @@ class _BuildRoutinePageState extends State<BuildRoutinePage> {
                             child: Container(
                               width: 10,
                               height: 10,
-                              color: Colors.white,
+                              color: pointsColor(upperBack),
                             ),
                           ),
                         ), // Upper Back
@@ -243,7 +252,7 @@ class _BuildRoutinePageState extends State<BuildRoutinePage> {
                             child: Container(
                               width: 10,
                               height: 10,
-                              color: Colors.white,
+                              color: pointsColor(upperBack),
                             ),
                           ),
                         ), // Upper Back
@@ -254,7 +263,7 @@ class _BuildRoutinePageState extends State<BuildRoutinePage> {
                             child: Container(
                               width: 10,
                               height: 10,
-                              color: Colors.white,
+                              color: pointsColor(triceps),
                             ),
                           ),
                         ), // Triceps
@@ -265,7 +274,7 @@ class _BuildRoutinePageState extends State<BuildRoutinePage> {
                             child: Container(
                               width: 10,
                               height: 10,
-                              color: Colors.white,
+                              color: pointsColor(triceps),
                             ),
                           ),
                         ), // Triceps
@@ -276,7 +285,7 @@ class _BuildRoutinePageState extends State<BuildRoutinePage> {
                             child: Container(
                               width: 10,
                               height: 10,
-                              color: Colors.white,
+                              color: pointsColor(trapezius),
                             ),
                           ),
                         ), // Trapeziums
@@ -287,7 +296,7 @@ class _BuildRoutinePageState extends State<BuildRoutinePage> {
                             child: Container(
                               width: 10,
                               height: 10,
-                              color: Colors.white,
+                              color: pointsColor(trapezius),
                             ),
                           ),
                         ), // Trapeziums
@@ -297,215 +306,289 @@ class _BuildRoutinePageState extends State<BuildRoutinePage> {
                 ),
               ),
             ),
-            const Padding(padding: EdgeInsets.only(top: 20.0)),
+            const Padding(padding: EdgeInsets.only(top: 10.0)),
             Padding(
               padding: const EdgeInsets.only(left: 30.0, right: 30.0),
               child: Row(
-                mainAxisAlignment: MainAxisAlignment.spaceAround,
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: <Widget>[
-                  Expanded(
-                    child: QuantityInput(
-                        label: 'Biceps',
-                        buttonColor: const Color.fromRGBO(57, 180, 120, 1),
-                        value: biceps,
-                        acceptsZero: true,
-                        maxValue: 10,
-                        decoration:
-                            const InputDecoration(border: OutlineInputBorder()),
-                        onChanged: (value) {
-                          setState(() {
-                            biceps = int.parse(value.replaceAll(',', ''));
-                          });
-                        }),
-                  ),
-                  Expanded(
-                    child: QuantityInput(
-                        label: 'Triceps',
-                        buttonColor: const Color.fromRGBO(57, 180, 120, 1),
-                        value: triceps,
-                        acceptsZero: true,
-                        maxValue: 10,
-                        decoration: const InputDecoration(
-                          border: OutlineInputBorder(),
-                        ),
-                        onChanged: (value) {
-                          setState(() {
-                            triceps = int.parse(value.replaceAll(',', ''));
-                          });
-                        }),
-                  ),
+                  QuantityInput(
+                      label: 'Biceps',
+                      buttonColor: Colors.green.shade500,
+                      value: biceps,
+                      acceptsZero: true,
+                      maxValue: 10,
+                      decoration:
+                          const InputDecoration(border: OutlineInputBorder()),
+                      onChanged: (value) {
+                        setState(() {
+                          biceps = int.parse(value.replaceAll(',', ''));
+                        });
+                      }),
+                  QuantityInput(
+                      label: 'Triceps',
+                      buttonColor: Colors.green.shade500,
+                      value: triceps,
+                      acceptsZero: true,
+                      maxValue: 10,
+                      decoration: const InputDecoration(
+                        border: OutlineInputBorder(),
+                      ),
+                      onChanged: (value) {
+                        setState(() {
+                          triceps = int.parse(value.replaceAll(',', ''));
+                        });
+                      }),
                 ],
               ),
             ),
             Padding(
               padding: const EdgeInsets.only(left: 30.0, right: 30.0),
               child: Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: <Widget>[
-                  Expanded(
-                    child: QuantityInput(
-                        label: 'Chest',
-                        buttonColor: const Color.fromRGBO(57, 180, 120, 1),
-                        value: chest,
-                        acceptsZero: true,
-                        maxValue: 10,
-                        decoration: const InputDecoration(
-                          border: OutlineInputBorder(),
-                        ),
-                        onChanged: (value) {
-                          setState(() {
-                            chest = int.parse(value.replaceAll(',', ''));
-                          });
-                        }),
-                  ),
-                  Expanded(
-                    child: QuantityInput(
-                        label: 'Abdomen',
-                        buttonColor: const Color.fromRGBO(57, 180, 120, 1),
-                        value: abdomen,
-                        acceptsZero: true,
-                        maxValue: 10,
-                        decoration: const InputDecoration(
-                          border: OutlineInputBorder(),
-                        ),
-                        onChanged: (value) {
-                          setState(() {
-                            abdomen = int.parse(value.replaceAll(',', ''));
-                          });
-                        }),
-                  ),
+                  QuantityInput(
+                      label: 'Chest',
+                      buttonColor: Colors.green.shade500,
+                      value: chest,
+                      acceptsZero: true,
+                      maxValue: 10,
+                      decoration: const InputDecoration(
+                        border: OutlineInputBorder(),
+                      ),
+                      onChanged: (value) {
+                        setState(() {
+                          chest = int.parse(value.replaceAll(',', ''));
+                        });
+                      }),
+                  QuantityInput(
+                      label: 'Abdomen',
+                      buttonColor: Colors.green.shade500,
+                      value: abdomen,
+                      acceptsZero: true,
+                      maxValue: 10,
+                      decoration: const InputDecoration(
+                        border: OutlineInputBorder(),
+                      ),
+                      onChanged: (value) {
+                        setState(() {
+                          abdomen = int.parse(value.replaceAll(',', ''));
+                        });
+                      }),
                 ],
               ),
             ),
             Padding(
               padding: const EdgeInsets.only(left: 30.0, right: 30.0),
               child: Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: <Widget>[
-                  Expanded(
-                    child: QuantityInput(
-                        label: 'Trapezius',
-                        buttonColor: const Color.fromRGBO(57, 180, 120, 1),
-                        value: trapezius,
-                        acceptsZero: true,
-                        maxValue: 10,
-                        decoration: const InputDecoration(
-                          border: OutlineInputBorder(),
-                        ),
-                        onChanged: (value) {
-                          setState(() {
-                            trapezius = int.parse(value.replaceAll(',', ''));
-                          });
-                        }),
-                  ),
-                  Expanded(
-                    child: QuantityInput(
-                        label: 'Upper Back',
-                        buttonColor: const Color.fromRGBO(57, 180, 120, 1),
-                        value: upperBack,
-                        acceptsZero: true,
-                        maxValue: 10,
-                        decoration: const InputDecoration(
-                          border: OutlineInputBorder(),
-                        ),
-                        onChanged: (value) {
-                          setState(() {
-                            upperBack = int.parse(value.replaceAll(',', ''));
-                          });
-                        }),
-                  ),
+                  QuantityInput(
+                      label: 'Trapezius',
+                      buttonColor: Colors.green.shade500,
+                      value: trapezius,
+                      acceptsZero: true,
+                      maxValue: 10,
+                      decoration: const InputDecoration(
+                        border: OutlineInputBorder(),
+                      ),
+                      onChanged: (value) {
+                        setState(() {
+                          trapezius = int.parse(value.replaceAll(',', ''));
+                        });
+                      }),
+                  QuantityInput(
+                      label: 'Upper Back',
+                      buttonColor: Colors.green.shade500,
+                      value: upperBack,
+                      acceptsZero: true,
+                      maxValue: 10,
+                      decoration: const InputDecoration(
+                        border: OutlineInputBorder(),
+                      ),
+                      onChanged: (value) {
+                        setState(() {
+                          upperBack = int.parse(value.replaceAll(',', ''));
+                        });
+                      }),
                 ],
               ),
             ),
             Padding(
               padding: const EdgeInsets.only(left: 30.0, right: 30.0),
               child: Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: <Widget>[
-                  Expanded(
-                    child: QuantityInput(
-                        label: 'Lower Back',
-                        buttonColor: const Color.fromRGBO(57, 180, 120, 1),
-                        value: lowerBack,
-                        acceptsZero: true,
-                        maxValue: 10,
-                        decoration: const InputDecoration(
-                          border: OutlineInputBorder(),
-                        ),
-                        onChanged: (value) {
-                          setState(() {
-                            lowerBack = int.parse(value.replaceAll(',', ''));
-                          });
-                        }),
-                  ),
-                  Expanded(
-                    child: QuantityInput(
-                        label: 'Glutes',
-                        buttonColor: const Color.fromRGBO(57, 180, 120, 1),
-                        value: glutes,
-                        acceptsZero: true,
-                        maxValue: 10,
-                        decoration: const InputDecoration(
-                          border: OutlineInputBorder(),
-                        ),
-                        onChanged: (value) {
-                          setState(() {
-                            glutes = int.parse(value.replaceAll(',', ''));
-                          });
-                        }),
-                  ),
+                  QuantityInput(
+                      label: 'Lower Back',
+                      buttonColor: Colors.green.shade500,
+                      value: lowerBack,
+                      acceptsZero: true,
+                      maxValue: 10,
+                      decoration: const InputDecoration(
+                        border: OutlineInputBorder(),
+                      ),
+                      onChanged: (value) {
+                        setState(() {
+                          lowerBack = int.parse(value.replaceAll(',', ''));
+                        });
+                      }),
+                  QuantityInput(
+                      label: 'Glutes',
+                      buttonColor: Colors.green.shade500,
+                      value: glutes,
+                      acceptsZero: true,
+                      maxValue: 10,
+                      decoration: const InputDecoration(
+                        border: OutlineInputBorder(),
+                      ),
+                      onChanged: (value) {
+                        setState(() {
+                          glutes = int.parse(value.replaceAll(',', ''));
+                        });
+                      }),
                 ],
               ),
             ),
             Padding(
               padding: const EdgeInsets.only(left: 30.0, right: 30.0),
               child: Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: <Widget>[
-                  Expanded(
-                    child: QuantityInput(
-                        label: 'Quadriceps',
-                        buttonColor: const Color.fromRGBO(57, 180, 120, 1),
-                        value: quadriceps,
-                        acceptsZero: true,
-                        maxValue: 10,
-                        decoration: const InputDecoration(
-                          border: OutlineInputBorder(),
-                        ),
-                        onChanged: (value) {
-                          setState(() {
-                            quadriceps = int.parse(value.replaceAll(',', ''));
-                          });
-                        }),
-                  ),
-                  Expanded(
-                    child: QuantityInput(
-                        label: 'Hamstrings',
-                        buttonColor: const Color.fromRGBO(57, 180, 120, 1),
-                        value: hamstring,
-                        acceptsZero: true,
-                        maxValue: 10,
-                        decoration: const InputDecoration(
-                          border: OutlineInputBorder(),
-                        ),
-                        onChanged: (value) {
-                          setState(() {
-                            hamstring = int.parse(value.replaceAll(',', ''));
-                          });
-                        }),
-                  ),
+                  QuantityInput(
+                      label: 'Quadriceps',
+                      buttonColor: Colors.green.shade500,
+                      value: quadriceps,
+                      acceptsZero: true,
+                      maxValue: 10,
+                      decoration: const InputDecoration(
+                        border: OutlineInputBorder(),
+                      ),
+                      onChanged: (value) {
+                        setState(() {
+                          quadriceps = int.parse(value.replaceAll(',', ''));
+                        });
+                      }),
+                  QuantityInput(
+                      label: 'Hamstrings',
+                      buttonColor: Colors.green.shade500,
+                      value: hamstring,
+                      acceptsZero: true,
+                      maxValue: 10,
+                      decoration: const InputDecoration(
+                        border: OutlineInputBorder(),
+                      ),
+                      onChanged: (value) {
+                        setState(() {
+                          hamstring = int.parse(value.replaceAll(',', ''));
+                        });
+                      }),
                 ],
               ),
             ),
-            const SizedBox(height: 30.0),
-            TextButton.icon(
-              onPressed: () {},
-              icon: const Icon(
-                Icons.arrow_forward_ios,
-                color: Colors.white,
+            Padding(
+              padding: const EdgeInsets.only(left: 30.0, right: 30.0),
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                crossAxisAlignment: CrossAxisAlignment.end,
+                children: <Widget>[
+                  QuantityInput(
+                      label: 'Thighs',
+                      buttonColor: Colors.green.shade500,
+                      value: thigh,
+                      acceptsZero: true,
+                      maxValue: 10,
+                      decoration: const InputDecoration(
+                        border: OutlineInputBorder(),
+                      ),
+                      onChanged: (value) {
+                        setState(() {
+                          thigh = int.parse(value.replaceAll(',', ''));
+                        });
+                      }),
+                  QuantityInput(
+                      label: 'Calf',
+                      buttonColor: Colors.green.shade500,
+                      value: calf,
+                      acceptsZero: true,
+                      maxValue: 10,
+                      decoration: const InputDecoration(
+                        border: OutlineInputBorder(),
+                      ),
+                      onChanged: (value) {
+                        setState(() {
+                          calf = int.parse(value.replaceAll(',', ''));
+                        });
+                      }),
+                  /*ElevatedButton(
+                    onPressed: () {},
+                    style: ElevatedButton.styleFrom(
+                      primary: Colors.green.shade500,
+                      padding: const EdgeInsets.symmetric(
+                        horizontal: 60,
+                        vertical: 20,
+                      ),
+                    ),
+                    child: const Text('Sign In'),
+                  ),*/
+                ],
               ),
-              label: const Text('Next'),
-              style: TextButton.styleFrom(primary: Colors.white),
             ),
           ],
         ),
       ),
+      floatingActionButton: FloatingActionButton.extended(
+        onPressed: () {
+          Map<String, int> data = {
+            'bicep': biceps,
+            'triceps': triceps,
+            'chest': chest,
+            'abdomen': abdomen,
+            'thigh': thigh,
+            'calf': calf,
+            'trapezius': trapezius,
+            'upperBack': upperBack,
+            'lowerBack': lowerBack,
+            'glutes': glutes,
+            'quadriceps': quadriceps,
+            'hamstring': hamstring,
+          };
+          Navigator.push(
+            context,
+            MaterialPageRoute(
+              builder: (context) =>
+                  BuildRoutinePageFinalPage(workoutSettings: data),
+            ),
+          );
+        },
+        backgroundColor: Colors.green.shade500,
+        label: const Text('Next'),
+        icon: const Icon(
+          Icons.arrow_forward_ios,
+          color: Colors.white,
+        ),
+      ),
+      floatingActionButtonLocation: FloatingActionButtonLocation.miniEndTop,
     );
+  }
+
+  Color pointsColor(int bodyPart) {
+    switch (bodyPart) {
+      case 1:
+      case 2:
+      case 3:
+        return Colors.green;
+      case 4:
+      case 5:
+      case 6:
+        return Colors.orange;
+      case 7:
+      case 8:
+      case 9:
+      case 10:
+        return Colors.red;
+      default:
+        return Colors.white;
+    }
   }
 }
