@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:woa/constants/routes.dart';
 import 'package:woa/pages/build_routine_page.dart';
+import 'package:woa/pages/build_routine_page_2.dart';
 import 'package:woa/pages/library_page.dart';
 import 'package:woa/pages/login.dart';
 import 'package:woa/pages/registration.dart';
@@ -14,31 +15,46 @@ Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
   ThemeData themeData = await initThemeData();
 
-  runApp(MaterialApp(
-    theme: themeData,
-    home: FutureBuilder(
-      future: AuthService.firebase().initialize(),
-      builder: (context, snapshot) {
-        switch (snapshot.connectionState) {
-          case ConnectionState.done:
-            final user = AuthService.firebase().currentUser;
-            if (user != null) {
-              return const Dashboard();
-            } else {
-              return const LoginPage();
-            }
-          default:
-            return const CircularProgressIndicator();
-        }
+  runApp(MyApp(themeData: themeData));
+}
+
+class MyApp extends StatelessWidget {
+  const MyApp({
+    Key? key,
+    required this.themeData,
+  }) : super(key: key);
+
+  final ThemeData themeData;
+
+  @override
+  Widget build(BuildContext context) {
+    return MaterialApp(
+      theme: themeData,
+      home: FutureBuilder(
+        future: AuthService.firebase().initialize(),
+        builder: (context, snapshot) {
+          switch (snapshot.connectionState) {
+            case ConnectionState.done:
+              final user = AuthService.firebase().currentUser;
+              if (user != null) {
+                return const Dashboard();
+              } else {
+                return const LoginPage();
+              }
+            default:
+              return const CircularProgressIndicator();
+          }
+        },
+      ),
+      routes: {
+        loginRoute: (context) => const LoginPage(),
+        registerRoute: (context) => const RegistrationPage(),
+        verifyRoute: (context) => const VerifyEmailPage(),
+        dashboardRoute: (context) => const Dashboard(),
+        libraryRoute: (context) => const LibraryPage(),
+        buildRoutine: (context) => const BuildRoutinePage(),
+        buildRoutineFinal: (context) => const BuildRoutinePageFinalPage(),
       },
-    ),
-    routes: {
-      loginRoute: (context) => const LoginPage(),
-      registerRoute: (context) => const RegistrationPage(),
-      verifyRoute: (context) => const VerifyEmailPage(),
-      dashboardRoute: (context) => const Dashboard(),
-      libraryRoute: (context) => const LibraryPage(),
-      buildRoutine: (context) => const BuildRoutinePage(),
-    },
-  ));
+    );
+  }
 }

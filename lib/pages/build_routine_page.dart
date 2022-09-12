@@ -1,9 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:quantity_input/quantity_input.dart';
-import 'package:woa/pages/build_routine_page_2.dart';
+import 'package:woa/constants/routes.dart';
 
 import '../services/auth/auth_service.dart';
 import '../utils.dart';
+import 'build_routine_page_2.dart';
 
 class BuildRoutinePage extends StatefulWidget {
   const BuildRoutinePage({Key? key}) : super(key: key);
@@ -25,7 +26,6 @@ class _BuildRoutinePageState extends State<BuildRoutinePage> {
   int glutes = 0;
   int quadriceps = 0;
   int hamstring = 0;
-  String mode = 'power';
   int frequency = 0;
   int pulseTime = 20;
   int pauseTime = 0;
@@ -551,15 +551,21 @@ class _BuildRoutinePageState extends State<BuildRoutinePage> {
             'lowerBack': lowerBack,
             'glutes': glutes,
             'quadriceps': quadriceps,
-            'hamstring': hamstring,
+            'hamstring': hamstring
           };
-          Navigator.push(
-            context,
-            MaterialPageRoute(
-              builder: (context) =>
-                  BuildRoutinePageFinalPage(workoutSettings: data),
-            ),
-          );
+
+          Map<String, dynamic> settings = {'powerMode': 0, 'frequency': 0.0};
+
+          var values = data.values.toList();
+          int sum = 0;
+          for (int v in values) {
+            sum += v;
+          }
+
+          if (sum > 1) {
+            Navigator.pushNamed(context, buildRoutineFinal,
+                arguments: BuildRoutinePageFinalArguments(data, settings));
+          }
         },
         backgroundColor: Colors.green.shade500,
         label: const Text('Next'),
