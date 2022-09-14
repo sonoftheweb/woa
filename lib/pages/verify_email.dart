@@ -46,7 +46,7 @@ class VerifyEmailPage extends StatelessWidget {
                 onPressed: () {
                   Navigator.of(context).pushNamed(registerRoute);
                 },
-                style: TextButton.styleFrom(primary: Colors.white),
+                style: TextButton.styleFrom(backgroundColor: Colors.white),
                 child: const Text('Register'),
               ),
               const Padding(
@@ -64,7 +64,7 @@ class VerifyEmailPage extends StatelessWidget {
                 onPressed: () {
                   Navigator.of(context).pushNamed(loginRoute);
                 },
-                style: TextButton.styleFrom(primary: Colors.white),
+                style: TextButton.styleFrom(backgroundColor: Colors.white),
                 child: const Text('Sign In'),
               )
             ],

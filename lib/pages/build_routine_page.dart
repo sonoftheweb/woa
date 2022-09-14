@@ -554,7 +554,14 @@ class _BuildRoutinePageState extends State<BuildRoutinePage> {
             'hamstring': hamstring
           };
 
-          Map<String, dynamic> settings = {'powerMode': 0, 'frequency': 0.0};
+          Map<String, dynamic> settings = {
+            'powerMode': 0,
+            'frequency': 0.0,
+            'pulseWidth': 0.0,
+            'pulseTime': 0.0,
+            'pauseTime': 0.0,
+            'trainTime': 0.0,
+          };
 
           var values = data.values.toList();
           int sum = 0;

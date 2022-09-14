@@ -146,7 +146,7 @@ class _LoginPageState extends State<LoginPage> {
                     }
                   },
                   style: ElevatedButton.styleFrom(
-                    primary: Colors.green.shade500,
+                    backgroundColor: Colors.green.shade500,
                     padding: const EdgeInsets.symmetric(
                       horizontal: 60,
                       vertical: 20,
@@ -165,7 +165,7 @@ class _LoginPageState extends State<LoginPage> {
                   onPressed: () {
                     Navigator.of(context).pushNamed(registerRoute);
                   },
-                  style: TextButton.styleFrom(primary: Colors.white),
+                  style: TextButton.styleFrom(backgroundColor: Colors.white),
                   child: const Text('Register'),
                 )
               ],

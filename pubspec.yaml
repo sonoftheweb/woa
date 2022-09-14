@@ -42,6 +42,9 @@ dependencies:
   floating_action_bubble: ^1.1.4
   quantity_input: ^1.0.2
   syncfusion_flutter_sliders: ^20.2.48
+  sqflite: ^2.0.3+1
+  path_provider: ^2.0.11
+  path: ^1.8.2
 
 dev_dependencies:
   flutter_test:

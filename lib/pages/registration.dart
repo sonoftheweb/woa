@@ -177,7 +177,7 @@ class _RegistrationPageState extends State<RegistrationPage> {
                     }
                   },
                   style: ElevatedButton.styleFrom(
-                    primary: Colors.green.shade500,
+                    backgroundColor: Colors.green.shade500,
                     padding: const EdgeInsets.symmetric(
                       horizontal: 60,
                       vertical: 20,
@@ -199,7 +199,7 @@ class _RegistrationPageState extends State<RegistrationPage> {
                       (route) => false,
                     );
                   },
-                  style: TextButton.styleFrom(primary: Colors.white),
+                  style: TextButton.styleFrom(backgroundColor: Colors.white),
                   child: const Text('Sign In'),
                 )
               ],

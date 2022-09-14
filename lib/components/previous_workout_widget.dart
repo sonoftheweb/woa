@@ -21,13 +21,13 @@ class PreviousWorkoutWidget extends StatelessWidget {
         ElevatedButton(
           onPressed: () {},
           style: ElevatedButton.styleFrom(
-            primary: Colors.green.shade500,
+            backgroundColor: Colors.green.shade500,
             padding: const EdgeInsets.symmetric(
               horizontal: 60,
               vertical: 20,
             ),
           ),
-          child: Text('See all previous workout'),
+          child: const Text('See all previous workout'),
         )
       ],
     );
@@ -347,7 +347,7 @@ class PreviousWorkoutHeaderWidget extends StatelessWidget {
                 Text(
                   textAlign: TextAlign.left,
                   'Previous: $date',
-                  style: TextStyle(fontSize: 12),
+                  style: const TextStyle(fontSize: 12),
                 ),
                 Text(
                   textAlign: TextAlign.left,

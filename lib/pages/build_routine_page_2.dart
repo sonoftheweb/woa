@@ -29,6 +29,10 @@ class _BuildRoutinePageFinalPageState extends State<BuildRoutinePageFinalPage> {
   };
 
   double _frequency = 85.0;
+  double _pulseW = 350.0;
+  double _pulseT = 20.0;
+  double _pauseT = 0.0;
+  double _trainT = 20.0;
 
   @override
   Widget build(BuildContext context) {
@@ -47,9 +51,6 @@ class _BuildRoutinePageFinalPageState extends State<BuildRoutinePageFinalPage> {
               const Center(
                 child: FormTitleWidget(registrationText: 'Mode selection'),
               ),
-              const Center(
-                child: Text('Select a mode below.'),
-              ),
               const Padding(
                 padding: EdgeInsets.only(top: 20),
               ),
@@ -64,6 +65,15 @@ class _BuildRoutinePageFinalPageState extends State<BuildRoutinePageFinalPage> {
               ),
               const Padding(
                 padding: EdgeInsets.only(top: 20),
+              ),
+              const Center(
+                child: FormTitleWidget(registrationText: 'Parameters'),
+              ),
+              const Padding(
+                padding: EdgeInsets.only(top: 10),
+              ),
+              const Padding(
+                padding: EdgeInsets.only(top: 10),
               ),
               SfSlider(
                 value: _frequency,
@@ -83,11 +93,130 @@ class _BuildRoutinePageFinalPageState extends State<BuildRoutinePageFinalPage> {
                     args.deviceSettings['frequency'] = value;
                   });
                 },
-              )
+              ),
+              const Padding(
+                padding: EdgeInsets.only(top: 10),
+              ),
+              const Center(
+                child: Text('Frequency'),
+              ),
+              SfSlider(
+                value: _pulseW,
+                min: 0.0,
+                max: 500.0,
+                interval: 100.0,
+                stepSize: 10.0,
+                showTicks: true,
+                showLabels: true,
+                enableTooltip: true,
+                minorTicksPerInterval: 5,
+                inactiveColor: Colors.green,
+                activeColor: Colors.green,
+                onChanged: (dynamic value) {
+                  setState(() {
+                    _pulseW = value;
+                    args.deviceSettings['pulseWidth'] = value;
+                  });
+                },
+              ),
+              const Padding(
+                padding: EdgeInsets.only(top: 10),
+              ),
+              const Center(
+                child: Text('Pulse Width'),
+              ),
+              SfSlider(
+                value: _pulseT,
+                min: 10,
+                max: 60,
+                interval: 10,
+                stepSize: 5.0,
+                showTicks: true,
+                showLabels: true,
+                enableTooltip: true,
+                minorTicksPerInterval: 5,
+                inactiveColor: Colors.green,
+                activeColor: Colors.green,
+                onChanged: (dynamic value) {
+                  setState(() {
+                    _pulseT = value;
+                    args.deviceSettings['pulseTime'] = value;
+                  });
+                },
+              ),
+              const Padding(
+                padding: EdgeInsets.only(top: 10),
+              ),
+              const Center(
+                child: Text('Pulse Time'),
+              ),
+              SfSlider(
+                value: _pauseT,
+                min: 0,
+                max: 60,
+                interval: 10,
+                stepSize: 1.0,
+                showTicks: true,
+                showLabels: true,
+                enableTooltip: true,
+                minorTicksPerInterval: 5,
+                inactiveColor: Colors.green,
+                activeColor: Colors.green,
+                onChanged: (dynamic value) {
+                  setState(() {
+                    _pauseT = value;
+                    args.deviceSettings['pauseTime'] = value;
+                  });
+                },
+              ),
+              const Padding(
+                padding: EdgeInsets.only(top: 10),
+              ),
+              const Center(
+                child: Text('Pause Time'),
+              ),
+              SfSlider(
+                value: _trainT,
+                min: 0,
+                max: 60,
+                interval: 10,
+                stepSize: 1.0,
+                showTicks: true,
+                showLabels: true,
+                enableTooltip: true,
+                minorTicksPerInterval: 5,
+                inactiveColor: Colors.green,
+                activeColor: Colors.green,
+                onChanged: (dynamic value) {
+                  setState(() {
+                    _trainT = value;
+                    args.deviceSettings['trainTime'] = value;
+                  });
+                },
+              ),
+              const Padding(
+                padding: EdgeInsets.only(top: 10),
+              ),
+              const Center(
+                child: Text('Train Time'),
+              ),
+              const Padding(
+                padding: EdgeInsets.only(top: 40),
+              ),
             ],
           ),
         ),
       ),
+      floatingActionButton: FloatingActionButton.extended(
+        onPressed: () {},
+        backgroundColor: Colors.green.shade500,
+        label: const Text('Save'),
+        icon: const Icon(
+          Icons.save,
+          color: Colors.white,
+        ),
+      ),
+      floatingActionButtonLocation: FloatingActionButtonLocation.miniEndTop,
     );
   }
 }

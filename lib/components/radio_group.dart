@@ -8,8 +8,8 @@ class RadioGroup extends StatefulWidget {
   const RadioGroup({
     Key? key,
     required this.data,
-    this.selected,
     required this.callback,
+    this.selected,
   }) : super(key: key);
 
   @override
@@ -26,7 +26,6 @@ class _RadioGroupState extends State<RadioGroup> {
         _selectedValue = widget.selected;
       });
     }
-
     return Column(
       children: widget.data.entries.map((e) {
         return Container(
