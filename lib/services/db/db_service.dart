@@ -3,6 +3,8 @@ import 'package:path_provider/path_provider.dart'
     show MissingPlatformDirectoryException, getApplicationDocumentsDirectory;
 import 'package:sqflite/sqflite.dart';
 
+import '../crud/db_exceptions.dart';
+
 const dbName = 'workouts.db';
 const workoutTable = 'workout';
 const createWorkoutTable = '''
