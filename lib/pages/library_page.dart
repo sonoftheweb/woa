@@ -1,5 +1,7 @@
 import 'package:floating_action_bubble/floating_action_bubble.dart';
 import 'package:flutter/material.dart';
+import 'package:woa/services/crud/workout_service.dart';
+import 'package:woa/services/db/db_service.dart';
 
 import '../components/menu.dart';
 import '../constants/routes.dart';
@@ -18,8 +20,17 @@ class _LibraryPageState extends State<LibraryPage>
   late Animation<double> _animation;
   late AnimationController _animationController;
 
+  late final DbService _dbService;
+  late final WorkoutService _workoutService;
+  final user = AuthService.firebase().currentUser;
+  String get userId => AuthService.firebase().currentUser!.id!;
+
   @override
   void initState() {
+    // Open database connection
+    _dbService = DbService();
+    _workoutService = WorkoutService();
+
     _animationController = AnimationController(
       vsync: this,
       duration: const Duration(milliseconds: 260),
@@ -35,8 +46,13 @@ class _LibraryPageState extends State<LibraryPage>
   }
 
   @override
+  void dispose() {
+    _dbService.close();
+    super.dispose();
+  }
+
+  @override
   Widget build(BuildContext context) {
-    final user = AuthService.firebase().currentUser;
     checkAuth(user, context);
 
     return Scaffold(
@@ -82,7 +98,20 @@ class _LibraryPageState extends State<LibraryPage>
                 textAlign: TextAlign.center,
               ),
             ),
-            Container()
+            StreamBuilder(
+              stream: _workoutService.allWorkouts,
+              builder: (BuildContext context,
+                  AsyncSnapshot<List<DatabaseWorkout>> snapshot) {
+                switch (snapshot.connectionState) {
+                  case ConnectionState.waiting:
+                    return const Text('Waiting for all workouts');
+                  default:
+                    return const CircularProgressIndicator(
+                      color: Colors.white,
+                    );
+                }
+              },
+            )
           ],
         ),
       ),

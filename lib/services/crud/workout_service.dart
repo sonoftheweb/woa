@@ -1,3 +1,4 @@
+import 'dart:async';
 import 'dart:convert';
 
 import 'package:flutter/foundation.dart';
@@ -6,8 +7,27 @@ import 'package:woa/services/db/db_service.dart';
 import 'db_exceptions.dart';
 
 class WorkoutService {
+  List<DatabaseWorkout> _workouts = [];
+
+  // make this service a singleton
+  static final WorkoutService _shared = WorkoutService._sharedInstance();
+  WorkoutService._sharedInstance();
+  factory WorkoutService() => _shared;
+
+  final _workoutStreamController =
+      StreamController<List<DatabaseWorkout>>.broadcast();
+
+  Stream<List<DatabaseWorkout>> get allWorkouts =>
+      _workoutStreamController.stream;
+
+  Future<void> cacheWorkouts() async {
+    final allWorkouts = await getAllWorkouts();
+    _workouts = allWorkouts.toList();
+    _workoutStreamController.add(_workouts);
+  }
+
   Future<void> deleteWorkout({required int id}) async {
-    DbService().ensureDbIsOpen();
+    await DbService().ensureDbIsOpen();
     final db = DbService().getDatabaseOrThrow();
     final deletedCount = await db.delete(
       workoutTable,
@@ -16,6 +36,9 @@ class WorkoutService {
     );
     if (deletedCount != 1) {
       throw CouldNotDelete();
+    } else {
+      _workouts.removeWhere((workout) => workout.id == id);
+      _workoutStreamController.add(_workouts);
     }
   }
 
@@ -26,7 +49,7 @@ class WorkoutService {
     bool? createdLocally = false,
     String? firebaseId,
   }) async {
-    DbService().ensureDbIsOpen();
+    await DbService().ensureDbIsOpen();
     final db = DbService().getDatabaseOrThrow();
     final res = await db.query(
       workoutTable,
@@ -47,7 +70,7 @@ class WorkoutService {
       workoutSettingsColumn: json.encode(deviceSettings),
       createdAtColumn: date.toString()
     });
-    return DatabaseWorkout(
+    final workout = DatabaseWorkout(
         id: id,
         firebaseId: firebaseId,
         createdLocally: createdLocally != null && createdLocally ? true : false,
@@ -56,10 +79,14 @@ class WorkoutService {
         workoutAreas: json.encode(workoutAreas),
         workoutSettings: json.encode(deviceSettings),
         createdAt: date.toString());
+
+    _workouts.add(workout);
+    _workoutStreamController.add(_workouts);
+    return workout;
   }
 
   Future<DatabaseWorkout> getWorkout({required int id}) async {
-    DbService().ensureDbIsOpen();
+    await DbService().ensureDbIsOpen();
     final db = DbService().getDatabaseOrThrow();
     final workout = await db.query(
       workoutTable,
@@ -70,12 +97,16 @@ class WorkoutService {
     if (workout.isEmpty) {
       throw CouldNotFind();
     } else {
-      return DatabaseWorkout.fromRow(workout.first);
+      final singleWorkout = DatabaseWorkout.fromRow(workout.first);
+      _workouts.removeWhere((workout) => workout.id == singleWorkout.id);
+      _workouts.add(singleWorkout);
+      _workoutStreamController.add(_workouts);
+      return singleWorkout;
     }
   }
 
   Future<Iterable<DatabaseWorkout>> getAllWorkouts() async {
-    DbService().ensureDbIsOpen();
+    await DbService().ensureDbIsOpen();
     final db = DbService().getDatabaseOrThrow();
     final workouts = await db.query(workoutTable);
     return workouts.map((w) => DatabaseWorkout.fromRow(w));

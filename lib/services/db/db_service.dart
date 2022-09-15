@@ -2,6 +2,7 @@ import 'package:path/path.dart' show join;
 import 'package:path_provider/path_provider.dart'
     show MissingPlatformDirectoryException, getApplicationDocumentsDirectory;
 import 'package:sqflite/sqflite.dart';
+import 'package:woa/services/crud/workout_service.dart';
 
 import '../crud/db_exceptions.dart';
 
@@ -35,6 +36,7 @@ class DbService {
       final db = await openDatabase(dbPath);
       _db = db;
       await db.execute(createWorkoutTable);
+      await WorkoutService().cacheWorkouts();
     } on MissingPlatformDirectoryException {
       throw UnableToGetDocumentsDirectory();
     }
