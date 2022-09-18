@@ -3,13 +3,13 @@ import 'package:flutter/foundation.dart';
 
 @immutable
 class AuthUser {
-  final String? id;
+  final String id;
   final String? email;
   final bool isEmailVerified;
   final String? displayName;
 
   const AuthUser({
-    this.id,
+    required this.id,
     required this.email,
     this.displayName,
     required this.isEmailVerified,

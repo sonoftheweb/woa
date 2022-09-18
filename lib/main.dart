@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:woa/constants/routes.dart';
 import 'package:woa/pages/build_routine_page.dart';
-import 'package:woa/pages/build_routine_page_2.dart';
 import 'package:woa/pages/library_page.dart';
 import 'package:woa/pages/login.dart';
 import 'package:woa/pages/registration.dart';
@@ -53,7 +52,6 @@ class MyApp extends StatelessWidget {
         dashboardRoute: (context) => const Dashboard(),
         libraryRoute: (context) => const LibraryPage(),
         buildRoutine: (context) => const BuildRoutinePage(),
-        buildRoutineFinal: (context) => const BuildRoutinePageFinalPage(),
       },
     );
   }

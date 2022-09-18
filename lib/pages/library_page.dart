@@ -1,7 +1,6 @@
 import 'package:floating_action_bubble/floating_action_bubble.dart';
 import 'package:flutter/material.dart';
-import 'package:woa/services/crud/workout_service.dart';
-import 'package:woa/services/db/db_service.dart';
+import 'package:woa/services/cloud/firebase_cloud_storage.dart';
 
 import '../components/menu.dart';
 import '../constants/routes.dart';
@@ -20,17 +19,13 @@ class _LibraryPageState extends State<LibraryPage>
   late Animation<double> _animation;
   late AnimationController _animationController;
 
-  late final DbService _dbService;
-  late final WorkoutService _workoutService;
-  final user = AuthService.firebase().currentUser;
-  String get userId => AuthService.firebase().currentUser!.id!;
+  late final FirebaseCloudStorage _workoutService;
+  final user = AuthService.firebase().currentUser!;
+  String get userId => user.id;
 
   @override
   void initState() {
-    // Open database connection
-    _dbService = DbService();
-    _workoutService = WorkoutService();
-
+    _workoutService = FirebaseCloudStorage();
     _animationController = AnimationController(
       vsync: this,
       duration: const Duration(milliseconds: 260),
@@ -43,12 +38,6 @@ class _LibraryPageState extends State<LibraryPage>
     _animation = Tween<double>(begin: 0, end: 1).animate(curvedAnimation);
 
     super.initState();
-  }
-
-  @override
-  void dispose() {
-    _dbService.close();
-    super.dispose();
   }
 
   @override
@@ -85,8 +74,8 @@ class _LibraryPageState extends State<LibraryPage>
       ),
       body: SingleChildScrollView(
         child: Column(
-          children: [
-            const Padding(
+          children: const [
+            Padding(
               padding: EdgeInsets.only(
                 top: 30.0,
                 left: 40.0,
@@ -98,20 +87,7 @@ class _LibraryPageState extends State<LibraryPage>
                 textAlign: TextAlign.center,
               ),
             ),
-            StreamBuilder(
-              stream: _workoutService.allWorkouts,
-              builder: (BuildContext context,
-                  AsyncSnapshot<List<DatabaseWorkout>> snapshot) {
-                switch (snapshot.connectionState) {
-                  case ConnectionState.waiting:
-                    return const Text('Waiting for all workouts');
-                  default:
-                    return const CircularProgressIndicator(
-                      color: Colors.white,
-                    );
-                }
-              },
-            )
+            Text('Waiting for all workouts')
           ],
         ),
       ),

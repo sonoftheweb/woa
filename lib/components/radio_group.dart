@@ -4,11 +4,13 @@ class RadioGroup extends StatefulWidget {
   final Map data;
   final Function callback;
   final int? selected;
+  final Color? textColor;
 
   const RadioGroup({
     Key? key,
     required this.data,
     required this.callback,
+    this.textColor,
     this.selected,
   }) : super(key: key);
 
@@ -30,12 +32,18 @@ class _RadioGroupState extends State<RadioGroup> {
       children: widget.data.entries.map((e) {
         return Container(
           decoration: BoxDecoration(
-            border: Border.all(color: Colors.grey.shade700, width: 3),
+            border: Border.all(
+              color: widget.textColor ?? Colors.black45,
+              width: 3,
+            ),
             borderRadius: BorderRadius.circular(5),
           ),
           margin: const EdgeInsets.only(bottom: 8),
           child: ListTile(
+            textColor: widget.textColor ?? Colors.black45,
             leading: Radio<String>(
+              fillColor: MaterialStateColor.resolveWith(
+                  (states) => widget.textColor ?? Colors.black45),
               value: e.key.toString(),
               groupValue: _selectedValue.toString(),
               onChanged: (value) {
