@@ -1,5 +1,6 @@
 import 'package:floating_action_bubble/floating_action_bubble.dart';
 import 'package:flutter/material.dart';
+import 'package:woa/pages/test_ble.dart';
 import 'package:woa/pages/view_routine_page.dart';
 import 'package:woa/services/cloud/cloud_workout.dart';
 import 'package:woa/services/cloud/firebase_cloud_storage.dart';
@@ -124,7 +125,10 @@ class _LibraryPageState extends State<LibraryPage>
             title: 'Routine from marketplace',
             titleStyle: const TextStyle(fontSize: 13, color: Colors.white),
             bubbleColor: Colors.green.shade500,
-            onPress: () {},
+            onPress: () {
+              Navigator.push(context,
+                  MaterialPageRoute(builder: (context) => FlutterBlueApp()));
+            },
           ),
           Bubble(
             icon: Icons.calculate,

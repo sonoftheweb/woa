@@ -52,6 +52,7 @@ dependencies:
   internet_connection_checker: ^0.0.1+4
   app_settings: ^4.1.8
   flutter_reactive_ble: ^5.0.2
+  flutter_blue: ^0.8.0
 
 dev_dependencies:
   flutter_test:

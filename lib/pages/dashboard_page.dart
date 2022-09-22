@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
-import 'package:woa/components/connectivity/ble_reactive_checker.dart';
 import 'package:woa/components/previous_workout_widget.dart';
 import 'package:woa/services/auth/auth_service.dart';
 
@@ -45,7 +44,6 @@ class _DashboardState extends State<Dashboard> {
       body: SingleChildScrollView(
         child: Column(
           children: [
-            const BluetoothChecker(),
             Padding(
               padding: const EdgeInsets.only(
                 left: 40.0,

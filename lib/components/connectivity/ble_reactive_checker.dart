@@ -1,5 +1,6 @@
 import 'package:app_settings/app_settings.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_blue/flutter_blue.dart';
 import 'package:flutter_reactive_ble/flutter_reactive_ble.dart';
 
 class BluetoothChecker extends StatefulWidget {
@@ -10,69 +11,34 @@ class BluetoothChecker extends StatefulWidget {
 }
 
 class _BluetoothCheckerState extends State<BluetoothChecker> {
-  final reactiveBle = FlutterReactiveBle();
+  final _fb = FlutterBlue.instance;
   late Stream _statusStream;
-  late Stream _connectedDeviceStream;
 
   @override
   void initState() {
     super.initState();
-    _statusStream = reactiveBle.statusStream;
-    _connectedDeviceStream = reactiveBle.connectedDeviceStream;
+    _statusStream = _fb.state;
   }
 
   @override
   Widget build(BuildContext context) {
     return StreamBuilder(
-      stream: _statusStream,
-      initialData: BleStatus.unknown,
-      builder: (context, snapshot) {
-        final state = snapshot.data as BleStatus;
-        switch (state) {
-          case BleStatus.poweredOff:
-          case BleStatus.unsupported:
-          case BleStatus.unauthorized:
-            return BleIsOff(state: state);
-          default:
-            return StreamBuilder(
-              stream: _connectedDeviceStream,
-              builder: (context, connectionSnapshot) {
-                final connectionState = connectionSnapshot.data;
-                print(connectionState);
-                return Container();
-              },
-            );
-          // _connectedDeviceStream.listen((state) {
-          //   print(state.deviceId);
-          //   switch (state) {
-          //     case DeviceConnectionState.connected:
-          //       break;
-          //     default:
-          //       return Text('nothing connected');
-          //   }
-          // });
-          // case BleStatus.unknown:
-          //   // TODO: Handle this case.
-          //   break;
-          // case BleStatus.unauthorized:
-          //   // TODO: Handle this case.
-          //   break;
-          // case BleStatus.locationServicesDisabled:
-          //   // TODO: Handle this case.
-          //   break;
-          // case BleStatus.ready:
-          //   // TODO: Handle this case.
-          //   break;
-        }
-      },
-    );
+        stream: _statusStream,
+        initialData: BluetoothState.unknown,
+        builder: (context, snapshot) {
+          final state = snapshot.data as BluetoothState;
+          if (state == BluetoothState.on) {
+            return Container(); // it's on, do nothing
+          }
+          return BleIsOff(state: state);
+        });
   }
 }
 
 class BleIsOff extends StatelessWidget {
   const BleIsOff({Key? key, this.state}) : super(key: key);
 
-  final BleStatus? state;
+  final BluetoothState? state;
 
   @override
   Widget build(BuildContext context) {
@@ -94,9 +60,9 @@ class BleIsOff extends StatelessWidget {
           ),
           const Padding(padding: EdgeInsets.only(left: 10)),
           Text(
-            'Bluetooth is ${state != null ? state.toString().substring(10) : 'not available for this device'}.',
+            'Bluetooth is ${state != null ? state.toString().substring(15) : 'not available for this device'}.',
           ),
-          state == BleStatus.poweredOff || state == BleStatus.unauthorized
+          state == BleStatus.poweredOff
               ? Padding(
                   padding: const EdgeInsets.only(left: 10.0),
                   child: ElevatedButton(
@@ -109,6 +75,51 @@ class BleIsOff extends StatelessWidget {
               : const Padding(padding: EdgeInsets.only(left: 10.0)),
         ],
       ),
+    );
+  }
+}
+
+class BlueToothReadyChip extends StatefulWidget {
+  const BlueToothReadyChip({Key? key}) : super(key: key);
+
+  @override
+  State<BlueToothReadyChip> createState() => _BlueToothReadyChipState();
+}
+
+class _BlueToothReadyChipState extends State<BlueToothReadyChip> {
+  late Future<List<BluetoothDevice>> _connectedDevices;
+  @override
+  void initState() {
+    _connectedDevices = FlutterBlue.instance.connectedDevices;
+    FlutterBlue.instance.startScan(timeout: const Duration(seconds: 10));
+    super.initState();
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    int countConnected = 0;
+    return StreamBuilder<List<BluetoothDevice>>(
+      stream: Stream.periodic(const Duration(seconds: 10))
+          .asyncMap((_) => _connectedDevices),
+      initialData: [],
+      builder: (context, snapshot) {
+        for (var d in snapshot.data!) {
+          d.state.listen((state) {
+            if (state == BluetoothDeviceState.connected) {
+              countConnected++;
+            }
+          });
+        }
+        return Row(
+          children: [
+            Icon(countConnected > 0
+                ? Icons.bluetooth_connected
+                : Icons.bluetooth_disabled),
+            const Padding(padding: EdgeInsets.only(left: 5)),
+            Text(countConnected > 0 ? 'Connected' : 'No device'),
+          ],
+        );
+      },
     );
   }
 }

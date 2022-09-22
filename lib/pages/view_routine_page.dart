@@ -2,8 +2,8 @@ import 'dart:convert';
 
 import 'package:flutter/material.dart';
 import 'package:smooth_page_indicator/smooth_page_indicator.dart';
-import 'package:woa/services/cloud/cloud_storage_constants.dart';
 
+import '../components/connectivity/ble_reactive_checker.dart';
 import '../services/auth/auth_service.dart';
 import '../services/cloud/cloud_workout.dart';
 import '../services/cloud/firebase_cloud_storage.dart';
@@ -94,14 +94,23 @@ class _ViewRoutinePageState extends State<ViewRoutinePage> {
         crossAxisAlignment: CrossAxisAlignment.start,
         mainAxisAlignment: MainAxisAlignment.start,
         children: [
-          Row(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-            children: const [
-              Text('one'),
-              Text('two'),
-              Text('three'),
-            ],
+          Padding(
+            padding: const EdgeInsets.only(
+              left: 30,
+              right: 30,
+            ),
+            child: Column(
+              children: [
+                Center(
+                  child: ElevatedButton(
+                    onPressed: () {
+                      print('yay');
+                    },
+                    child: const Text('Start this routine'),
+                  ),
+                ),
+              ],
+            ),
           )
         ],
       ),
@@ -127,20 +136,8 @@ class _ViewRoutinePageState extends State<ViewRoutinePage> {
 
     return Scaffold(
       appBar: AppBar(
-        automaticallyImplyLeading: false,
         elevation: 0,
         titleSpacing: 0,
-        leading: Padding(
-          padding: const EdgeInsets.symmetric(horizontal: 25),
-          child: Builder(
-            builder: (context) => IconButton(
-              onPressed: () => Navigator.pop(context),
-              icon: const Icon(
-                Icons.close_rounded,
-              ),
-            ),
-          ),
-        ),
         title: Text(workout.name!),
       ),
       body: SafeArea(
@@ -148,6 +145,7 @@ class _ViewRoutinePageState extends State<ViewRoutinePage> {
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.center,
             children: [
+              const BluetoothChecker(),
               const SizedBox(height: 16),
               Padding(
                 padding: const EdgeInsets.only(
@@ -157,21 +155,18 @@ class _ViewRoutinePageState extends State<ViewRoutinePage> {
                 child: Padding(
                   padding: const EdgeInsets.only(top: 10, bottom: 20),
                   child: Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    mainAxisAlignment: MainAxisAlignment.spaceAround,
                     children: [
-                      Container(
-                        alignment: Alignment.center,
-                        child: Row(
-                          children: [
-                            const Icon(Icons.man_outlined),
-                            Text(
-                              powerModes.values
-                                  .toList()[int.parse(settings['mode'])],
-                              style: const TextStyle(fontSize: 10),
-                            ),
-                          ],
-                        ),
-                      ),
+                      // Container(
+                      //   alignment: Alignment.center,
+                      //   child: Row(
+                      //     children: [
+                      //       const Icon(Icons.man_outlined),
+                      //       Text(powerModes.values
+                      //           .toList()[int.parse(settings['mode'])]),
+                      //     ],
+                      //   ),
+                      // ),
                       Padding(
                         padding: const EdgeInsets.only(top: 10, bottom: 10),
                         child: SmoothPageIndicator(
@@ -184,18 +179,19 @@ class _ViewRoutinePageState extends State<ViewRoutinePage> {
                           ),
                         ),
                       ),
-                      Container(
-                        alignment: Alignment.center,
-                        child: Row(
-                          children: const [
-                            Icon(Icons.bluetooth_connected),
-                            Text(
-                              ' Connected',
-                              style: TextStyle(fontSize: 10),
-                            ),
-                          ],
-                        ),
-                      ),
+                      //const BlueToothReadyChip(),
+                      // Container(
+                      //   alignment: Alignment.center,
+                      //   child: Row(
+                      //     children: const [
+                      //       Icon(Icons.bluetooth_connected),
+                      //       Text(
+                      //         ' Connected',
+                      //         style: TextStyle(fontSize: 10),
+                      //       ),
+                      //     ],
+                      //   ),
+                      // ),
                     ],
                   ),
                 ),
