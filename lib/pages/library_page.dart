@@ -1,8 +1,11 @@
 import 'package:floating_action_bubble/floating_action_bubble.dart';
 import 'package:flutter/material.dart';
+import 'package:woa/pages/view_routine_page.dart';
+import 'package:woa/services/cloud/cloud_workout.dart';
 import 'package:woa/services/cloud/firebase_cloud_storage.dart';
 
 import '../components/menu.dart';
+import '../components/workout_list_view.dart';
 import '../constants/routes.dart';
 import '../services/auth/auth_service.dart';
 import '../utils.dart';
@@ -18,6 +21,7 @@ class _LibraryPageState extends State<LibraryPage>
     with SingleTickerProviderStateMixin {
   late Animation<double> _animation;
   late AnimationController _animationController;
+  late Stream<Iterable<CloudWorkout>> _allWorkoutStream;
 
   late final FirebaseCloudStorage _workoutService;
   final user = AuthService.firebase().currentUser!;
@@ -26,6 +30,7 @@ class _LibraryPageState extends State<LibraryPage>
   @override
   void initState() {
     _workoutService = FirebaseCloudStorage();
+    _allWorkoutStream = _workoutService.allWorkouts(ownerUserId: userId);
     _animationController = AnimationController(
       vsync: this,
       duration: const Duration(milliseconds: 260),
@@ -72,24 +77,43 @@ class _LibraryPageState extends State<LibraryPage>
           ),
         ),
       ),
-      body: SingleChildScrollView(
-        child: Column(
-          children: const [
-            Padding(
-              padding: EdgeInsets.only(
-                top: 30.0,
-                left: 40.0,
-                right: 40.0,
-                bottom: 60.0,
-              ),
-              child: Text(
-                'Below is a list of your workout library. Select one to schedule a workout, build a new workout plan or add to your library from the marketplace.',
-                textAlign: TextAlign.center,
-              ),
-            ),
-            Text('Waiting for all workouts')
-          ],
-        ),
+      body: StreamBuilder(
+        stream: _allWorkoutStream,
+        builder: (context, snapshot) {
+          switch (snapshot.connectionState) {
+            case ConnectionState.waiting:
+            case ConnectionState.active:
+              if (snapshot.hasError) {
+                return const Text('Something broke!');
+              }
+              if (snapshot.hasData) {
+                final allWorkouts = snapshot.data as Iterable<CloudWorkout>;
+                return WorkoutListView(
+                    workouts: allWorkouts,
+                    onTap: (workout) {
+                      Navigator.pushNamed(context, viewRoutine,
+                          arguments:
+                              RoutineArguments(workoutId: workout.documentId));
+                    },
+                    onDelete: (workout) async {
+                      await _workoutService.deleteWorkout(
+                          documentId: workout.documentId);
+                    });
+              } else {
+                return const Center(
+                  child: CircularProgressIndicator(
+                    color: Colors.white,
+                  ),
+                );
+              }
+            default:
+              return const Center(
+                child: CircularProgressIndicator(
+                  color: Colors.white,
+                ),
+              );
+          }
+        },
       ),
       drawer: const NavigationDrawer(),
       floatingActionButton: FloatingActionBubble(

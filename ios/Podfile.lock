@@ -1,8 +1,13 @@
 PODS:
+  - "app_settings (3.0.0+1)":
+    - Flutter
   - cloud_firestore (3.4.7):
     - Firebase/Firestore (= 9.3.0)
     - firebase_core
     - Flutter
+  - connectivity_plus (0.0.1):
+    - Flutter
+    - ReachabilitySwift
   - Firebase/Auth (9.3.0):
     - Firebase/CoreOnly
     - FirebaseAuth (~> 9.3.0)
@@ -44,6 +49,12 @@ PODS:
   - FirebaseFirestore/WithLeveldb (9.3.0):
     - FirebaseFirestore/Base
   - Flutter (1.0.0)
+  - flutter_blue (0.0.1):
+    - Flutter
+    - flutter_blue/Protos (= 0.0.1)
+  - flutter_blue/Protos (0.0.1):
+    - Flutter
+    - Protobuf (~> 3.11.4)
   - FMDB (2.7.5):
     - FMDB/standard (= 2.7.5)
   - FMDB/standard (2.7.5)
@@ -75,17 +86,28 @@ PODS:
   - path_provider_ios (0.0.1):
     - Flutter
   - PromisesObjC (2.1.1)
+  - Protobuf (3.11.4)
+  - ReachabilitySwift (5.0.0)
+  - reactive_ble_mobile (0.0.1):
+    - Flutter
+    - Protobuf (~> 3.5)
+    - SwiftProtobuf (~> 1.0)
   - sqflite (0.0.2):
     - Flutter
     - FMDB (>= 2.7.5)
+  - SwiftProtobuf (1.20.1)
 
 DEPENDENCIES:
+  - app_settings (from `.symlinks/plugins/app_settings/ios`)
   - cloud_firestore (from `.symlinks/plugins/cloud_firestore/ios`)
+  - connectivity_plus (from `.symlinks/plugins/connectivity_plus/ios`)
   - firebase_auth (from `.symlinks/plugins/firebase_auth/ios`)
   - firebase_core (from `.symlinks/plugins/firebase_core/ios`)
   - FirebaseFirestore (from `https://github.com/invertase/firestore-ios-sdk-frameworks.git`, tag `9.3.0`)
   - Flutter (from `Flutter`)
+  - flutter_blue (from `.symlinks/plugins/flutter_blue/ios`)
   - path_provider_ios (from `.symlinks/plugins/path_provider_ios/ios`)
+  - reactive_ble_mobile (from `.symlinks/plugins/reactive_ble_mobile/ios`)
   - sqflite (from `.symlinks/plugins/sqflite/ios`)
 
 SPEC REPOS:
@@ -101,10 +123,17 @@ SPEC REPOS:
     - GTMSessionFetcher
     - nanopb
     - PromisesObjC
+    - Protobuf
+    - ReachabilitySwift
+    - SwiftProtobuf
 
 EXTERNAL SOURCES:
+  app_settings:
+    :path: ".symlinks/plugins/app_settings/ios"
   cloud_firestore:
     :path: ".symlinks/plugins/cloud_firestore/ios"
+  connectivity_plus:
+    :path: ".symlinks/plugins/connectivity_plus/ios"
   firebase_auth:
     :path: ".symlinks/plugins/firebase_auth/ios"
   firebase_core:
@@ -114,8 +143,12 @@ EXTERNAL SOURCES:
     :tag: 9.3.0
   Flutter:
     :path: Flutter
+  flutter_blue:
+    :path: ".symlinks/plugins/flutter_blue/ios"
   path_provider_ios:
     :path: ".symlinks/plugins/path_provider_ios/ios"
+  reactive_ble_mobile:
+    :path: ".symlinks/plugins/reactive_ble_mobile/ios"
   sqflite:
     :path: ".symlinks/plugins/sqflite/ios"
 
@@ -125,7 +158,9 @@ CHECKOUT OPTIONS:
     :tag: 9.3.0
 
 SPEC CHECKSUMS:
+  app_settings: d103828c9f5d515c4df9ee754dabd443f7cedcf3
   cloud_firestore: 12574e6bb7af98076cfe75fe43dc83fff46958a1
+  connectivity_plus: 413a8857dd5d9f1c399a39130850d02fe0feaf7e
   Firebase: ef75abb1cdbc746d5a38f4e26c422c807b189b8c
   firebase_auth: 3726552033ccc757ef90f046ff2bcf5a13cd34bd
   firebase_core: e66a443ec996cb5e364dc70b4cfc1809c32cbb2e
@@ -135,6 +170,7 @@ SPEC CHECKSUMS:
   FirebaseCoreInternal: a13302b0088fbf5f38b79b6ece49c2af7d3e05d6
   FirebaseFirestore: 46c6a5f8f633267208ff16e6b72d7aedc7e77c8d
   Flutter: f04841e97a9d0b0a8025694d0796dd46242b2854
+  flutter_blue: eeb381dc4727a0954dede73515f683865494b370
   FMDB: 2ce00b547f966261cd18927a3ddb07cb6f3db82a
   GoogleDataTransport: 1c8145da7117bd68bbbed00cf304edb6a24de00f
   GoogleUtilities: e0913149f6b0625b553d70dae12b49fc62914fd1
@@ -142,7 +178,11 @@ SPEC CHECKSUMS:
   nanopb: b552cce312b6c8484180ef47159bc0f65a1f0431
   path_provider_ios: 14f3d2fd28c4fdb42f44e0f751d12861c43cee02
   PromisesObjC: ab77feca74fa2823e7af4249b8326368e61014cb
+  Protobuf: 176220c526ad8bd09ab1fb40a978eac3fef665f7
+  ReachabilitySwift: 985039c6f7b23a1da463388634119492ff86c825
+  reactive_ble_mobile: 9ce6723d37ccf701dbffd202d487f23f5de03b4c
   sqflite: 6d358c025f5b867b29ed92fc697fd34924e11904
+  SwiftProtobuf: e40a7684079620e84ba522dbaeab0cddb0ec7ffd
 
 PODFILE CHECKSUM: 41cb1ed4a84d26ea8fa2532254a8afb497b14545
 

@@ -47,6 +47,11 @@ dependencies:
   cloud_firestore: ^3.4.7
   intl: ">=0.15.0 <0.20.0"
   another_flushbar: ^1.10.18
+  smooth_page_indicator: ^1.0.0+2
+  connectivity_plus: ^2.3.7
+  internet_connection_checker: ^0.0.1+4
+  app_settings: ^4.1.8
+  flutter_reactive_ble: ^5.0.2
 
 dev_dependencies:
   flutter_test:

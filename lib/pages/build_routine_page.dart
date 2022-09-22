@@ -11,6 +11,7 @@ import '../components/quantity_selector_widget.dart';
 import '../components/radio_group.dart';
 import '../constants/routes.dart';
 import '../services/auth/auth_service.dart';
+import '../services/cloud/cloud_storage_constants.dart';
 import '../utils.dart';
 
 class BuildRoutinePage extends StatefulWidget {
@@ -54,14 +55,6 @@ class _BuildRoutinePageState extends State<BuildRoutinePage> {
     super.initState();
   }
 
-  Map powerModes = {
-    'power': 'Power',
-    'meta': 'Meta & Cell',
-    'relax': 'Body Relax',
-    'endurance': 'Endurance',
-    'fat_burn': 'Fat Burning'
-  };
-
   Future<CloudWorkout?> createOrGetExistingWorkout() async {
     final ownerUserId = AuthService.firebase().currentUser!.id;
 
@@ -92,9 +85,9 @@ class _BuildRoutinePageState extends State<BuildRoutinePage> {
     if (workout != null && name.isNotEmpty) {
       await _workoutService.updateWorkout(
         documentId: workout.documentId,
-        workoutName: name,
-        workoutAreas: json.encode(workoutAreas),
-        workoutSettings: json.encode(deviceSettings),
+        workoutNameData: name,
+        workoutAreasData: json.encode(workoutAreas),
+        workoutSettingsData: json.encode(deviceSettings),
       );
     }
   }
@@ -159,6 +152,7 @@ class _BuildRoutinePageState extends State<BuildRoutinePage> {
             'hamstring': hamstring,
           };
           final Map<String, String> settings = {
+            'mode': powerMode.toString(),
             'frequency': frequency.toString(),
             'pulseWidth': pulseWidth.toString(),
             'pulseTime': pulseTime.toString(),
@@ -902,11 +896,16 @@ class _BuildRoutinePageState extends State<BuildRoutinePage> {
                 'These parameters control the wearable and provides control for your comfort.',
             content: Column(
               children: [
-                const Padding(
-                  padding: EdgeInsets.only(top: 10),
-                ),
-                const Padding(
-                  padding: EdgeInsets.only(top: 10),
+                Padding(
+                  padding: const EdgeInsets.only(top: 10),
+                  child: Center(
+                    child: Text(
+                      'Frequency',
+                      style: TextStyle(
+                        color: Colors.grey.shade700,
+                      ),
+                    ),
+                  ),
                 ),
                 SfSliderTheme(
                   data: buildSfSliderThemeData(),
@@ -928,11 +927,16 @@ class _BuildRoutinePageState extends State<BuildRoutinePage> {
                     },
                   ),
                 ),
-                const Padding(
-                  padding: EdgeInsets.only(top: 10),
-                ),
-                const Center(
-                  child: Text('Frequency'),
+                Padding(
+                  padding: const EdgeInsets.only(top: 20),
+                  child: Center(
+                    child: Text(
+                      'Pulse Width',
+                      style: TextStyle(
+                        color: Colors.grey.shade700,
+                      ),
+                    ),
+                  ),
                 ),
                 SfSliderTheme(
                   data: buildSfSliderThemeData(),
@@ -954,11 +958,16 @@ class _BuildRoutinePageState extends State<BuildRoutinePage> {
                     },
                   ),
                 ),
-                const Padding(
-                  padding: EdgeInsets.only(top: 10),
-                ),
-                const Center(
-                  child: Text('Pulse Width'),
+                Padding(
+                  padding: const EdgeInsets.only(top: 20),
+                  child: Center(
+                    child: Text(
+                      'Pulse Time',
+                      style: TextStyle(
+                        color: Colors.grey.shade700,
+                      ),
+                    ),
+                  ),
                 ),
                 SfSliderTheme(
                   data: buildSfSliderThemeData(),
@@ -980,11 +989,16 @@ class _BuildRoutinePageState extends State<BuildRoutinePage> {
                     },
                   ),
                 ),
-                const Padding(
-                  padding: EdgeInsets.only(top: 10),
-                ),
-                const Center(
-                  child: Text('Pulse Time'),
+                Padding(
+                  padding: const EdgeInsets.only(top: 20),
+                  child: Center(
+                    child: Text(
+                      'Pause Time',
+                      style: TextStyle(
+                        color: Colors.grey.shade700,
+                      ),
+                    ),
+                  ),
                 ),
                 SfSliderTheme(
                   data: buildSfSliderThemeData(),
@@ -1006,11 +1020,16 @@ class _BuildRoutinePageState extends State<BuildRoutinePage> {
                     },
                   ),
                 ),
-                const Padding(
-                  padding: EdgeInsets.only(top: 10),
-                ),
-                const Center(
-                  child: Text('Pause Time'),
+                Padding(
+                  padding: const EdgeInsets.only(top: 20),
+                  child: Center(
+                    child: Text(
+                      'Train Time',
+                      style: TextStyle(
+                        color: Colors.grey.shade700,
+                      ),
+                    ),
+                  ),
                 ),
                 SfSliderTheme(
                   data: buildSfSliderThemeData(),

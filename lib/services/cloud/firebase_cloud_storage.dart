@@ -17,15 +17,15 @@ class FirebaseCloudStorage {
 
   Future<void> updateWorkout({
     required String documentId,
-    required String workoutName,
-    required String workoutAreas,
-    required String workoutSettings,
+    required String workoutNameData,
+    required String workoutAreasData,
+    required String workoutSettingsData,
   }) async {
     try {
       await workouts.doc(documentId).update({
-        workoutName: workoutName,
-        workoutAreas: workoutAreas,
-        workoutSettings: workoutSettings,
+        workoutName: workoutNameData,
+        workoutAreas: workoutAreasData,
+        workoutSettings: workoutSettingsData,
       });
     } catch (e) {
       throw CouldNotUpdateWorkoutException();
@@ -58,7 +58,10 @@ class FirebaseCloudStorage {
   Future<CloudWorkout> createNewWorkout({required String ownerUserId}) async {
     final document = await workouts.add({
       workoutOwnerUserId: ownerUserId,
+      workoutCreatedByUserId: ownerUserId,
       workoutName: '',
+      workoutAreas: '',
+      workoutSettings: ''
     });
     final fetchedWorkout = await document.get();
     return CloudWorkout(
@@ -66,6 +69,8 @@ class FirebaseCloudStorage {
       ownerUserId: ownerUserId,
       createdByUserId: ownerUserId,
       name: '',
+      areas: '',
+      settings: '',
     );
   }
 
@@ -84,18 +89,23 @@ class FirebaseCloudStorage {
     );
   }
 
-  // Future<CloudWorkout> fetchPreCreatedWorkout(
-  //     {required String ownerUserId}) async {
-  //   final fetchedWorkout = await workouts.doc().get();
-  //   return CloudWorkout(
-  //     documentId: fetchedWorkout.id,
-  //     ownerUserId: ownerUserId,
-  //     createdByUserId: fetchedWorkout.data()![workoutCreatedByUserId] as String,
-  //     name: fetchedWorkout.data()![workoutName] as String,
-  //     areas: fetchedWorkout.data()![workoutAreas] as String,
-  //     settings: fetchedWorkout.data()![workoutSettings] as String,
-  //   );
-  // }
+  Future<CloudWorkout?> fetchWorkoutByDocumentId({
+    required String workoutId,
+  }) async {
+    final fetchedWorkout = await workouts.doc(workoutId).get();
+    if (fetchedWorkout.exists) {
+      return CloudWorkout(
+        documentId: fetchedWorkout.id,
+        ownerUserId: fetchedWorkout.data()![workoutOwnerUserId],
+        createdByUserId: fetchedWorkout.data()![workoutCreatedByUserId],
+        name: fetchedWorkout.data()![workoutName] as String,
+        areas: fetchedWorkout.data()![workoutAreas] as String,
+        settings: fetchedWorkout.data()![workoutSettings] as String,
+      );
+    } else {
+      throw CouldNotGetWorkoutException();
+    }
+  }
 
   static final FirebaseCloudStorage _shared =
       FirebaseCloudStorage._sharedInstance();

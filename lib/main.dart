@@ -5,6 +5,7 @@ import 'package:woa/pages/library_page.dart';
 import 'package:woa/pages/login.dart';
 import 'package:woa/pages/registration.dart';
 import 'package:woa/pages/verify_email.dart';
+import 'package:woa/pages/view_routine_page.dart';
 import 'package:woa/services/auth/auth_service.dart';
 
 import 'pages/dashboard_page.dart';
@@ -29,6 +30,7 @@ class MyApp extends StatelessWidget {
   Widget build(BuildContext context) {
     return MaterialApp(
       theme: themeData,
+      debugShowCheckedModeBanner: false,
       home: FutureBuilder(
         future: AuthService.firebase().initialize(),
         builder: (context, snapshot) {
@@ -52,6 +54,9 @@ class MyApp extends StatelessWidget {
         dashboardRoute: (context) => const Dashboard(),
         libraryRoute: (context) => const LibraryPage(),
         buildRoutine: (context) => const BuildRoutinePage(),
+        viewRoutine: (context) => ViewRoutinePage(
+            args:
+                ModalRoute.of(context)!.settings.arguments as RoutineArguments),
       },
     );
   }
