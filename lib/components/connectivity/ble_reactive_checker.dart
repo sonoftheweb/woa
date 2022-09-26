@@ -1,7 +1,7 @@
-import 'package:app_settings/app_settings.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_blue/flutter_blue.dart';
-import 'package:flutter_reactive_ble/flutter_reactive_ble.dart';
+
+import 'is_connected_or_select.dart';
 
 class BluetoothChecker extends StatefulWidget {
   const BluetoothChecker({Key? key}) : super(key: key);
@@ -32,50 +32,6 @@ class _BluetoothCheckerState extends State<BluetoothChecker> {
           }
           return BleIsOff(state: state);
         });
-  }
-}
-
-class BleIsOff extends StatelessWidget {
-  const BleIsOff({Key? key, this.state}) : super(key: key);
-
-  final BluetoothState? state;
-
-  @override
-  Widget build(BuildContext context) {
-    return Container(
-      padding: const EdgeInsets.only(
-        left: 30.0,
-        right: 30.0,
-        top: 5.0,
-        bottom: 5.0,
-      ),
-      margin: const EdgeInsets.only(bottom: 20.0),
-      decoration: BoxDecoration(color: Colors.red.shade400),
-      child: Row(
-        mainAxisAlignment: MainAxisAlignment.start,
-        children: <Widget>[
-          const Icon(
-            Icons.bluetooth_disabled,
-            color: Colors.white54,
-          ),
-          const Padding(padding: EdgeInsets.only(left: 10)),
-          Text(
-            'Bluetooth is ${state != null ? state.toString().substring(15) : 'not available for this device'}.',
-          ),
-          state == BleStatus.poweredOff
-              ? Padding(
-                  padding: const EdgeInsets.only(left: 10.0),
-                  child: ElevatedButton(
-                    onPressed: () async {
-                      await AppSettings.openBluetoothSettings();
-                    },
-                    child: const Text('Turn on.'),
-                  ),
-                )
-              : const Padding(padding: EdgeInsets.only(left: 10.0)),
-        ],
-      ),
-    );
   }
 }
 

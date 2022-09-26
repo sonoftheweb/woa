@@ -127,7 +127,7 @@ class _LibraryPageState extends State<LibraryPage>
             bubbleColor: Colors.green.shade500,
             onPress: () {
               Navigator.push(context,
-                  MaterialPageRoute(builder: (context) => FlutterBlueApp()));
+                  MaterialPageRoute(builder: (context) => const FlutterBlueApp()));
             },
           ),
           Bubble(

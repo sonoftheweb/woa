@@ -3,7 +3,8 @@ import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:smooth_page_indicator/smooth_page_indicator.dart';
 
-import '../components/connectivity/ble_reactive_checker.dart';
+import '../components/connectivity/is_connected_or_select.dart';
+import '../enums/power_modes.dart';
 import '../services/auth/auth_service.dart';
 import '../services/cloud/cloud_workout.dart';
 import '../services/cloud/firebase_cloud_storage.dart';
@@ -89,30 +90,140 @@ class _ViewRoutinePageState extends State<ViewRoutinePage> {
   }
 
   Scaffold buildBody() {
+    CloudWorkout? workout = _workout;
+    Map<String, dynamic> settings = json.decode(workout!.settings!);
+    Map<String, dynamic> areas = json.decode(workout.areas!);
+
     final pages = [
-      Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        mainAxisAlignment: MainAxisAlignment.start,
-        children: [
-          Padding(
-            padding: const EdgeInsets.only(
-              left: 30,
-              right: 30,
-            ),
-            child: Column(
-              children: [
-                Center(
-                  child: ElevatedButton(
-                    onPressed: () {
-                      print('yay');
-                    },
-                    child: const Text('Start this routine'),
+      Container(
+        padding: const EdgeInsets.only(top: 10.0),
+        margin: const EdgeInsets.only(
+          left: 20.0,
+          right: 20,
+        ),
+        decoration: BoxDecoration(
+          color: const Color.fromRGBO(27, 26, 41, 0.2),
+          borderRadius: BorderRadius.circular(20.0),
+        ),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          mainAxisAlignment: MainAxisAlignment.start,
+          children: [
+            Padding(
+              padding: const EdgeInsets.only(
+                left: 30,
+                right: 30,
+              ),
+              child: Column(
+                children: [
+                  Padding(
+                    padding: const EdgeInsets.only(
+                      top: 10.0,
+                    ),
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.center,
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        const Icon(
+                          Icons.punch_clock_rounded,
+                          size: 50.0,
+                        ),
+                        const Text(
+                          '20.0',
+                          style: TextStyle(
+                            fontSize: 70.0,
+                            fontWeight: FontWeight.bold,
+                          ),
+                        ),
+                        const Text(
+                          'Train time in minutes',
+                          style: TextStyle(
+                            fontSize: 11.0,
+                            fontWeight: FontWeight.w100,
+                          ),
+                        ),
+                        const SizedBox(height: 40.0),
+                        Padding(
+                          padding: const EdgeInsets.only(bottom: 30.0),
+                          child: Row(
+                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                            children: [
+                              Column(
+                                children: [
+                                  const Icon(Icons.settings, size: 30),
+                                  const SizedBox(height: 10.0),
+                                  Text(
+                                    camelToNormal(PowerModes
+                                            .values[int.parse(settings['mode'])]
+                                            .toString()
+                                            .substring(11))
+                                        .toUpperCase(),
+                                    style: const TextStyle(
+                                      fontSize: 12,
+                                      fontWeight: FontWeight.bold,
+                                    ),
+                                  ),
+                                  const Text(
+                                    'workout mode',
+                                    style: TextStyle(
+                                      fontSize: 10,
+                                      fontWeight: FontWeight.w100,
+                                    ),
+                                  )
+                                ],
+                              ),
+                              Column(
+                                children: const [
+                                  Icon(Icons.fireplace_rounded, size: 60),
+                                  SizedBox(height: 10.0),
+                                  Text(
+                                    '250 kcal',
+                                    style: TextStyle(
+                                      fontSize: 30,
+                                      fontWeight: FontWeight.bold,
+                                    ),
+                                  ),
+                                  Text(
+                                    'Calories to be burnt',
+                                    style: TextStyle(
+                                      fontSize: 10,
+                                      fontWeight: FontWeight.w100,
+                                    ),
+                                  ),
+                                ],
+                              ),
+                              Column(
+                                children: const [
+                                  Icon(Icons.watch_rounded, size: 30),
+                                  SizedBox(height: 10.0),
+                                  Text(
+                                    'Enabled',
+                                    style: TextStyle(
+                                      fontSize: 12,
+                                      fontWeight: FontWeight.bold,
+                                    ),
+                                  ),
+                                  Text(
+                                    'external devices',
+                                    style: TextStyle(
+                                      fontSize: 10,
+                                      fontWeight: FontWeight.w100,
+                                    ),
+                                  )
+                                ],
+                              ),
+                            ],
+                          ),
+                        )
+                      ],
+                    ),
                   ),
-                ),
-              ],
-            ),
-          )
-        ],
+                  const IsConnectedOrSelect(),
+                ],
+              ),
+            )
+          ],
+        ),
       ),
       Column(
         crossAxisAlignment: CrossAxisAlignment.start,
@@ -130,9 +241,6 @@ class _ViewRoutinePageState extends State<ViewRoutinePage> {
         ],
       ),
     ];
-    CloudWorkout? workout = _workout;
-    Map<String, dynamic> settings = json.decode(workout!.settings!);
-    Map<String, dynamic> areas = json.decode(workout.areas!);
 
     return Scaffold(
       appBar: AppBar(
@@ -145,7 +253,6 @@ class _ViewRoutinePageState extends State<ViewRoutinePage> {
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.center,
             children: [
-              const BluetoothChecker(),
               const SizedBox(height: 16),
               Padding(
                 padding: const EdgeInsets.only(
@@ -210,5 +317,12 @@ class _ViewRoutinePageState extends State<ViewRoutinePage> {
         ),
       ),
     );
+  }
+
+  camelToNormal(String camelCaseText) {
+    RegExp exp = RegExp(r'(?<=[a-z])[A-Z]');
+    String result =
+        camelCaseText.replaceAllMapped(exp, (Match m) => (' ${m.group(0)}'));
+    return result;
   }
 }
