@@ -7,7 +7,11 @@ import 'package:permission_handler/permission_handler.dart';
 import 'package:woa/components/dialogs.dart';
 
 class IsConnectedOrSelect extends StatefulWidget {
-  const IsConnectedOrSelect({Key? key}) : super(key: key);
+  final Function callback;
+  const IsConnectedOrSelect({
+    Key? key,
+    required this.callback,
+  }) : super(key: key);
 
   @override
   State<IsConnectedOrSelect> createState() => _IsConnectedOrSelectState();
@@ -15,14 +19,8 @@ class IsConnectedOrSelect extends StatefulWidget {
 
 class _IsConnectedOrSelectState extends State<IsConnectedOrSelect> {
   bool scanInProgress = false;
-
-  void isScanning() {
-    FlutterBlue.instance.isScanning.listen((event) {
-      setState(() {
-        scanInProgress = event;
-      });
-    });
-  }
+  List<BluetoothService>? _serviceDiscovered;
+  BluetoothDevice? _selectedBleDevice;
 
   Future<bool> requestPermissions(BuildContext context) async {
     Map<Permission, PermissionStatus>? permissionResults;
@@ -65,135 +63,186 @@ class _IsConnectedOrSelectState extends State<IsConnectedOrSelect> {
   @override
   Widget build(BuildContext context) {
     requestPermissions(context);
-    return StreamBuilder<BluetoothState>(
-      stream: FlutterBlue.instance.state,
-      initialData: BluetoothState.unknown,
-      builder: (BuildContext context, AsyncSnapshot<BluetoothState> snapshot) {
-        final state = snapshot.data;
-        if (state != BluetoothState.on) {
-          return BleIsOff(state: state);
-        } else {
-          // check for what the bluetooth is connected to
-          //FlutterBlue.instance.startScan(timeout: const Duration(seconds: 10));
-          return StreamBuilder<bool>(
-              stream: FlutterBlue.instance.isScanning,
-              builder: (context, snapshot) {
-                if (snapshot.data != true) {
-                  return const Center(
-                    child: CircularProgressIndicator(
-                      color: Colors.white70,
+    return (_selectedBleDevice == null && _serviceDiscovered == null)
+        ? StreamBuilder<BluetoothState>(
+            stream: FlutterBlue.instance.state,
+            initialData: BluetoothState.unknown,
+            builder:
+                (BuildContext context, AsyncSnapshot<BluetoothState> snapshot) {
+              final state = snapshot.data;
+              if (state != BluetoothState.on) {
+                return BleIsOff(state: state);
+              } else {
+                return FutureBuilder(
+                  future: FlutterBlue.instance.startScan(
+                    timeout: const Duration(
+                      seconds: 10,
                     ),
-                  );
-                } else {
-                  return Column(
-                    children: [
-                      const Padding(
-                        padding: EdgeInsets.only(
-                          bottom: 10,
-                          top: 10,
-                        ),
-                        child: Text(
-                          'Devices available',
-                          style: TextStyle(
-                            fontSize: 18,
-                            fontWeight: FontWeight.bold,
-                          ),
-                        ),
-                      ),
-                      StreamBuilder<List<BluetoothDevice>>(
-                        stream: Stream.periodic(const Duration(seconds: 8))
-                            .asyncMap(
-                                (_) => FlutterBlue.instance.connectedDevices),
-                        initialData: [],
-                        builder: (c, snapshot) => Column(
-                          children: snapshot.data!.map((d) {
-                            return GestureDetector(
-                              onTap: () {},
-                              child: Container(
-                                decoration: BoxDecoration(
-                                  border: Border.all(
-                                      color: Colors.greenAccent, width: 3),
-                                  borderRadius: BorderRadius.circular(5),
-                                ),
-                                margin: const EdgeInsets.only(bottom: 8),
-                                child: ListTile(
-                                  textColor: Colors.white70,
-                                  title: Text(d.name),
+                  ),
+                  builder: (context, snapshot) {
+                    switch (snapshot.connectionState) {
+                      case ConnectionState.done:
+                        if (snapshot.hasData) {
+                          var devices = snapshot.data as List;
+                          List<Widget> widgets = [
+                            const Center(
+                              child: Padding(
+                                padding: EdgeInsets.all(20.0),
+                                child: Text(
+                                  'Devices found',
+                                  style: TextStyle(
+                                    fontWeight: FontWeight.bold,
+                                    fontSize: 18.0,
+                                  ),
                                 ),
                               ),
-                            );
-                          }).toList(),
-                        ),
-                      ),
-                      StreamBuilder<List<ScanResult>>(
-                        stream: FlutterBlue.instance.scanResults,
-                        initialData: [],
-                        builder: (c, snapshot) => Column(
-                          children: snapshot.data!
-                              .where((d) => d.device.name != '')
-                              .map(
-                            (d) {
-                              return GestureDetector(
-                                onTap: () {
-                                  d.device.connect();
-                                  d.device.discoverServices();
+                            ),
+                          ];
+
+                          for (var d
+                              in devices.where((d) => d.device.name != '')) {
+                            widgets.add(Container(
+                              decoration: BoxDecoration(
+                                border: Border.all(
+                                  color: Colors.white,
+                                  width: 3,
+                                ),
+                                borderRadius: BorderRadius.circular(5),
+                              ),
+                              margin: const EdgeInsets.only(bottom: 8),
+                              child: GestureDetector(
+                                onTap: () async {
+                                  await d.device.connect();
+                                  var servicesDiscovered =
+                                      await d.device.discoverServices();
+                                  setState(() {
+                                    _selectedBleDevice = d.device;
+                                    _serviceDiscovered = servicesDiscovered;
+                                  });
                                 },
-                                child: Container(
-                                  decoration: BoxDecoration(
-                                    border: Border.all(
-                                        color: Colors.white70, width: 3),
-                                    borderRadius: BorderRadius.circular(5),
-                                  ),
-                                  margin: const EdgeInsets.only(bottom: 8),
-                                  child: ListTile(
-                                    textColor: Colors.white70,
-                                    title: Text(d.device.name),
+                                child: ListTile(
+                                  textColor: Colors.white,
+                                  title: Text(d.device.name),
+                                  trailing: StreamBuilder<BluetoothDeviceState>(
+                                    stream: d.device.state,
+                                    initialData:
+                                        BluetoothDeviceState.disconnected,
+                                    builder: (c, cSnapshot) {
+                                      print(cSnapshot.data);
+                                      if (cSnapshot.data ==
+                                          BluetoothDeviceState.connected) {
+                                        return const Icon(
+                                          Icons.bluetooth_connected_rounded,
+                                          color: Colors.greenAccent,
+                                        );
+                                      } else {
+                                        if (_selectedBleDevice != null) {
+                                          setState(() {
+                                            _selectedBleDevice = null;
+                                            _serviceDiscovered = null;
+                                          });
+                                        }
+                                        return const Icon(
+                                          Icons.bluetooth_disabled_rounded,
+                                          color: Colors.grey,
+                                        );
+                                      }
+                                    },
                                   ),
                                 ),
-                              );
-                            },
-                          ).toList(),
+                              ),
+                            ));
+                          }
+
+                          return Column(
+                            children: widgets,
+                          );
+                        }
+                        return const Center(
+                          child: Text('No device found!'),
+                        );
+                      default:
+                        return Center(
+                          child: Column(
+                            children: const [
+                              Padding(
+                                padding: EdgeInsets.all(20.0),
+                                child: Text(
+                                  '... getting devices',
+                                  style: TextStyle(
+                                    color: Colors.greenAccent,
+                                  ),
+                                ),
+                              ),
+                              CircularProgressIndicator(
+                                color: Colors.white70,
+                              ),
+                            ],
+                          ),
+                        );
+                    }
+                  },
+                );
+              }
+            },
+          )
+        : Column(
+            children: [
+              Padding(
+                padding: const EdgeInsets.only(top: 40.0),
+                child: Column(
+                  children: [
+                    Text('connected to ${_selectedBleDevice!.name}'),
+                    const SizedBox(height: 20.0),
+                    ElevatedButton(
+                      style: ElevatedButton.styleFrom(
+                        padding: const EdgeInsets.all(20.0),
+                        backgroundColor: Colors.redAccent,
+                        tapTargetSize: MaterialTapTargetSize.shrinkWrap,
+                      ),
+                      onPressed: () async {
+                        await _selectedBleDevice?.disconnect();
+                        setState(() {
+                          _selectedBleDevice = null;
+                          _serviceDiscovered = null;
+                        });
+                      },
+                      child: Text(
+                        'Disconnect from ${_selectedBleDevice!.name}',
+                      ),
+                    ),
+                    const SizedBox(height: 60.0),
+                    ElevatedButton(
+                      onPressed: () {
+                        widget.callback(
+                            true, _selectedBleDevice, _serviceDiscovered);
+                      },
+                      style: ElevatedButton.styleFrom(
+                        padding: const EdgeInsets.all(30.0),
+                        textStyle: const TextStyle(
+                          fontSize: 20.0,
                         ),
                       ),
-                    ],
-                  );
-                }
-              });
-        }
-      },
-    );
-    /*return Padding(
-      padding: const EdgeInsets.only(bottom: 8.0),
-      child: Container(
-        alignment: Alignment.center,
-        width: MediaQuery.of(context).size.width,
-        height: MediaQuery.of(context).size.height - 860,
-        decoration: BoxDecoration(
-          color: Colors.redAccent,
-          borderRadius: BorderRadius.circular(10.0),
-          boxShadow: const [
-            BoxShadow(
-              color: Colors.black12,
-              blurRadius: 5.0,
-              spreadRadius: 2.0,
-            ),
-          ],
-        ),
-        child: Row(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: const [
-            Padding(
-              padding: EdgeInsets.only(right: 10.0),
-              child: Icon(
-                Icons.bluetooth_connected_rounded,
-                size: 30.0,
+                      child: Row(
+                        crossAxisAlignment: CrossAxisAlignment.center,
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: const [
+                          Icon(Icons.check_circle_outline_rounded),
+                          SizedBox(
+                            width: 10.0,
+                          ),
+                          Text(
+                            'Begin workout routine!',
+                            textAlign: TextAlign.center,
+                          ),
+                        ],
+                      ),
+                    ),
+                  ],
+                ),
               ),
-            ),
-            Text('is connected to'),
-          ],
-        ),
-      ),
-    );*/
+            ],
+          );
   }
 }
 
@@ -248,110 +297,6 @@ class BleIsOff extends StatelessWidget {
           ],
         ),
       ),
-    );
-  }
-}
-
-class ScanResultTile extends StatelessWidget {
-  const ScanResultTile({Key? key, required this.result, this.onTap})
-      : super(key: key);
-
-  final ScanResult result;
-  final VoidCallback? onTap;
-
-  Widget _buildTitle(BuildContext context) {
-    if (result.device.name.isNotEmpty) {
-      return Column(
-        mainAxisAlignment: MainAxisAlignment.start,
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: <Widget>[
-          Text(result.device.name),
-          Text(result.device.id.toString())
-        ],
-      );
-    } else {
-      return Text(result.device.id.toString());
-    }
-  }
-
-  Widget _buildAdvRow(BuildContext context, String title, String value) {
-    return Padding(
-      padding: const EdgeInsets.symmetric(horizontal: 16.0, vertical: 4.0),
-      child: Row(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: <Widget>[
-          Text(title, style: Theme.of(context).textTheme.caption),
-          const SizedBox(
-            width: 12.0,
-          ),
-          Expanded(
-            child: Text(
-              value,
-              style: Theme.of(context)
-                  .textTheme
-                  .caption
-                  ?.apply(color: Colors.black),
-              softWrap: true,
-            ),
-          ),
-        ],
-      ),
-    );
-  }
-
-  String getNiceHexArray(List<int> bytes) {
-    return '[${bytes.map((i) => i.toRadixString(16).padLeft(2, '0')).join(', ')}]'
-        .toUpperCase();
-  }
-
-  String getNiceManufacturerData(Map<int, List<int>> data) {
-    if (data.isEmpty) {
-      return 'N/A';
-    }
-    List<String> res = [];
-    data.forEach((id, bytes) {
-      res.add(
-          '${id.toRadixString(16).toUpperCase()}: ${getNiceHexArray(bytes)}');
-    });
-    return res.join(', ');
-  }
-
-  String getNiceServiceData(Map<String, List<int>> data) {
-    if (data.isEmpty) {
-      return 'N/A';
-    }
-    List<String> res = [];
-    data.forEach((id, bytes) {
-      res.add('${id.toUpperCase()}: ${getNiceHexArray(bytes)}');
-    });
-    return res.join(', ');
-  }
-
-  @override
-  Widget build(BuildContext context) {
-    return ExpansionTile(
-      title: _buildTitle(context),
-      leading: Text(result.rssi.toString()),
-      trailing: ElevatedButton(
-        onPressed: (result.advertisementData.connectable) ? onTap : null,
-        child: const Text('CONNECT'),
-      ),
-      children: <Widget>[
-        _buildAdvRow(
-            context, 'Complete Local Name', result.advertisementData.localName),
-        _buildAdvRow(context, 'Tx Power Level',
-            '${result.advertisementData.txPowerLevel ?? 'N/A'}'),
-        _buildAdvRow(context, 'Manufacturer Data',
-            getNiceManufacturerData(result.advertisementData.manufacturerData)),
-        _buildAdvRow(
-            context,
-            'Service UUIDs',
-            (result.advertisementData.serviceUuids.isNotEmpty)
-                ? result.advertisementData.serviceUuids.join(', ').toUpperCase()
-                : 'N/A'),
-        _buildAdvRow(context, 'Service Data',
-            getNiceServiceData(result.advertisementData.serviceData)),
-      ],
     );
   }
 }

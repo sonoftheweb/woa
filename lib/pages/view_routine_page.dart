@@ -1,6 +1,7 @@
 import 'dart:convert';
 
 import 'package:flutter/material.dart';
+import 'package:flutter_blue/flutter_blue.dart';
 import 'package:smooth_page_indicator/smooth_page_indicator.dart';
 
 import '../components/connectivity/is_connected_or_select.dart';
@@ -29,6 +30,10 @@ class _ViewRoutinePageState extends State<ViewRoutinePage> {
   late Future<CloudWorkout?> _getCurrentWorkout;
   CloudWorkout? _workout;
   final controller = PageController(viewportFraction: 1.0, keepPage: true);
+
+  bool _beginRoutine = false;
+  List<BluetoothService>? _services;
+  BluetoothDevice? _device;
 
   @override
   void initState() {
@@ -218,7 +223,16 @@ class _ViewRoutinePageState extends State<ViewRoutinePage> {
                       ],
                     ),
                   ),
-                  const IsConnectedOrSelect(),
+                  IsConnectedOrSelect(
+                    callback: (beginRoutine, device, services) {
+                      print('Beginning device work');
+                      setState(() {
+                        _beginRoutine = _beginRoutine;
+                        _device = device;
+                        _services = services;
+                      });
+                    },
+                  ),
                 ],
               ),
             )
