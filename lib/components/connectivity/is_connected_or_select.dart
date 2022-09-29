@@ -18,7 +18,6 @@ class IsConnectedOrSelect extends StatefulWidget {
 }
 
 class _IsConnectedOrSelectState extends State<IsConnectedOrSelect> {
-  bool scanInProgress = false;
   List<BluetoothService>? _serviceDiscovered;
   BluetoothDevice? _selectedBleDevice;
 
@@ -128,24 +127,23 @@ class _IsConnectedOrSelectState extends State<IsConnectedOrSelect> {
                                     initialData:
                                         BluetoothDeviceState.disconnected,
                                     builder: (c, cSnapshot) {
-                                      print(cSnapshot.data);
-                                      if (cSnapshot.data ==
-                                          BluetoothDeviceState.connected) {
-                                        return const Icon(
-                                          Icons.bluetooth_connected_rounded,
-                                          color: Colors.greenAccent,
-                                        );
-                                      } else {
-                                        if (_selectedBleDevice != null) {
-                                          setState(() {
-                                            _selectedBleDevice = null;
-                                            _serviceDiscovered = null;
-                                          });
-                                        }
-                                        return const Icon(
-                                          Icons.bluetooth_disabled_rounded,
-                                          color: Colors.grey,
-                                        );
+                                      switch (snapshot.data) {
+                                        case BluetoothDeviceState.connected:
+                                          return const Icon(
+                                            Icons.bluetooth_connected_rounded,
+                                            color: Colors.greenAccent,
+                                          );
+                                        default:
+                                          if (_selectedBleDevice != null) {
+                                            setState(() {
+                                              _selectedBleDevice = null;
+                                              _serviceDiscovered = null;
+                                            });
+                                          }
+                                          return const Icon(
+                                            Icons.bluetooth_disabled_rounded,
+                                            color: Colors.grey,
+                                          );
                                       }
                                     },
                                   ),
@@ -192,7 +190,7 @@ class _IsConnectedOrSelectState extends State<IsConnectedOrSelect> {
                 padding: const EdgeInsets.only(top: 40.0),
                 child: Column(
                   children: [
-                    Text('connected to ${_selectedBleDevice!.name}'),
+                    Text('connected to ${_selectedBleDevice!.name}...'),
                     const SizedBox(height: 20.0),
                     ElevatedButton(
                       style: ElevatedButton.styleFrom(
