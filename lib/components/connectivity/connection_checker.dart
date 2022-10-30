@@ -38,10 +38,7 @@ class _ConnectivityCheckerState extends State<ConnectivityChecker> {
     late ConnectivityResult result;
     try {
       result = await _connectivity.checkConnectivity();
-    } on PlatformException catch (e) {
-      print("Error Occurred: ${e.toString()} ");
-      return;
-    }
+    } on PlatformException {}
     if (!mounted) {
       return Future.value(null);
     }

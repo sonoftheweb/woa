@@ -1,10 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
+import 'package:woa/components/menu.dart';
 import 'package:woa/components/previous_workout_widget.dart';
 import 'package:woa/services/auth/auth_service.dart';
-
-import '../components/menu.dart';
-import '../utils.dart';
+import 'package:woa/utils.dart';
 
 class Dashboard extends StatefulWidget {
   const Dashboard({Key? key}) : super(key: key);

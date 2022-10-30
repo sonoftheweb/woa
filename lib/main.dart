@@ -4,6 +4,7 @@ import 'package:woa/pages/build_routine_page.dart';
 import 'package:woa/pages/library_page.dart';
 import 'package:woa/pages/login.dart';
 import 'package:woa/pages/registration.dart';
+import 'package:woa/pages/routine_work.dart';
 import 'package:woa/pages/verify_email.dart';
 import 'package:woa/pages/view_routine_page.dart';
 import 'package:woa/services/auth/auth_service.dart';
@@ -57,6 +58,9 @@ class MyApp extends StatelessWidget {
         viewRoutine: (context) => ViewRoutinePage(
             args:
                 ModalRoute.of(context)!.settings.arguments as RoutineArguments),
+        routineWork: (context) => RoutineWork(
+            args: ModalRoute.of(context)!.settings.arguments
+                as WorkRoutineArgument),
       },
     );
   }

@@ -57,7 +57,7 @@ class _BlueToothReadyChipState extends State<BlueToothReadyChip> {
     return StreamBuilder<List<BluetoothDevice>>(
       stream: Stream.periodic(const Duration(seconds: 10))
           .asyncMap((_) => _connectedDevices),
-      initialData: [],
+      initialData: const [],
       builder: (context, snapshot) {
         for (var d in snapshot.data!) {
           d.state.listen((state) {

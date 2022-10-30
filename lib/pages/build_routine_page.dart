@@ -2,17 +2,16 @@ import 'dart:convert';
 
 import 'package:flutter/material.dart';
 import 'package:syncfusion_flutter_core/theme.dart';
+import 'package:woa/components/cool_stepper/cool_stepper.dart';
+import 'package:woa/components/quantity_selector_widget.dart';
+import 'package:woa/components/radio_group.dart';
 import 'package:woa/components/slider_selector/sliders.dart';
+import 'package:woa/constants/routes.dart';
+import 'package:woa/services/auth/auth_service.dart';
+import 'package:woa/services/cloud/cloud_storage_constants.dart';
 import 'package:woa/services/cloud/cloud_workout.dart';
 import 'package:woa/services/cloud/firebase_cloud_storage.dart';
-
-import '../components/cool_stepper/cool_stepper.dart';
-import '../components/quantity_selector_widget.dart';
-import '../components/radio_group.dart';
-import '../constants/routes.dart';
-import '../services/auth/auth_service.dart';
-import '../services/cloud/cloud_storage_constants.dart';
-import '../utils.dart';
+import 'package:woa/utils.dart';
 
 class BuildRoutinePage extends StatefulWidget {
   const BuildRoutinePage({Key? key}) : super(key: key);
@@ -39,11 +38,11 @@ class _BuildRoutinePageState extends State<BuildRoutinePage> {
   int quadriceps = 0;
   int hamstring = 0;
   int powerMode = 0;
-  double frequency = 85.0;
-  double pulseWidth = 350.0;
-  double pulseTime = 20.0;
-  double pauseTime = 0.0;
-  double trainTime = 20.0;
+  double frequency = 85;
+  double pulseWidth = 350;
+  double pulseTime = 20;
+  double pauseTime = 0;
+  double trainTime = 20;
 
   late Future<CloudWorkout?> _createOrGetExistingWorkout;
 
@@ -1131,25 +1130,5 @@ class _BuildRoutinePageState extends State<BuildRoutinePage> {
       activeMinorTickColor: Colors.grey.shade500,
       inactiveMinorTickColor: Colors.grey.shade200,
     );
-  }
-
-  Color pointsColor(int bodyPart) {
-    switch (bodyPart) {
-      case 1:
-      case 2:
-      case 3:
-        return Colors.green;
-      case 4:
-      case 5:
-      case 6:
-        return Colors.orange;
-      case 7:
-      case 8:
-      case 9:
-      case 10:
-        return Colors.red;
-      default:
-        return Colors.white;
-    }
   }
 }

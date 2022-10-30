@@ -5,6 +5,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_blue/flutter_blue.dart';
 import 'package:permission_handler/permission_handler.dart';
 import 'package:woa/components/dialogs.dart';
+import 'package:woa/constants/devices_and_services.dart';
 
 class IsConnectedOrSelect extends StatefulWidget {
   final Function callback;
@@ -20,6 +21,7 @@ class IsConnectedOrSelect extends StatefulWidget {
 class _IsConnectedOrSelectState extends State<IsConnectedOrSelect> {
   List<BluetoothService>? _serviceDiscovered;
   BluetoothDevice? _selectedBleDevice;
+  FlutterBlue flutterBlue = FlutterBlue.instance;
 
   Future<bool> requestPermissions(BuildContext context) async {
     Map<Permission, PermissionStatus>? permissionResults;
@@ -62,185 +64,202 @@ class _IsConnectedOrSelectState extends State<IsConnectedOrSelect> {
   @override
   Widget build(BuildContext context) {
     requestPermissions(context);
-    return (_selectedBleDevice == null && _serviceDiscovered == null)
-        ? StreamBuilder<BluetoothState>(
-            stream: FlutterBlue.instance.state,
-            initialData: BluetoothState.unknown,
-            builder:
-                (BuildContext context, AsyncSnapshot<BluetoothState> snapshot) {
-              final state = snapshot.data;
-              if (state != BluetoothState.on) {
-                return BleIsOff(state: state);
-              } else {
-                return FutureBuilder(
-                  future: FlutterBlue.instance.startScan(
-                    timeout: const Duration(
-                      seconds: 10,
-                    ),
-                  ),
-                  builder: (context, snapshot) {
-                    switch (snapshot.connectionState) {
-                      case ConnectionState.done:
-                        if (snapshot.hasData) {
-                          var devices = snapshot.data as List;
-                          List<Widget> widgets = [
-                            const Center(
-                              child: Padding(
-                                padding: EdgeInsets.all(20.0),
-                                child: Text(
-                                  'Devices found',
-                                  style: TextStyle(
-                                    fontWeight: FontWeight.bold,
-                                    fontSize: 18.0,
-                                  ),
+
+    if (_selectedBleDevice == null) {
+      return StreamBuilder<BluetoothState>(
+        stream: flutterBlue.state,
+        initialData: BluetoothState.unknown,
+        builder:
+            (BuildContext context, AsyncSnapshot<BluetoothState> snapshot) {
+          final bluetoothState = snapshot.data;
+          if (bluetoothState != BluetoothState.on) {
+            return BleIsOff(state: bluetoothState);
+          } else {
+            // now we begin scan
+            return FutureBuilder(
+              future: flutterBlue.startScan(
+                withServices: [Guid(writeService), Guid(notifyService)],
+                timeout: const Duration(
+                  seconds: 10,
+                ),
+              ),
+              builder: (context, snapshot) {
+                switch (snapshot.connectionState) {
+                  case ConnectionState.done:
+                    if (snapshot.hasData) {
+                      List<BluetoothDevice> devices =
+                          snapshot.data as List<BluetoothDevice>;
+                      // get the already connected devices
+                      flutterBlue.connectedDevices.then(
+                        (results) {
+                          for (BluetoothDevice d in results) {
+                            devices.add(d);
+                          }
+                        },
+                      );
+
+                      List<Widget> widgets = [
+                        const Center(
+                          child: Padding(
+                            padding: EdgeInsets.all(20.0),
+                            child: Text(
+                              'Devices found',
+                              style: TextStyle(
+                                fontWeight: FontWeight.bold,
+                                fontSize: 18.0,
+                              ),
+                            ),
+                          ),
+                        ),
+                      ];
+
+                      for (var d
+                          in devices.where((d) => d.name == deviceName)) {
+                        widgets.add(
+                          Container(
+                            decoration: BoxDecoration(
+                              border: Border.all(
+                                color: Colors.white,
+                                width: 3,
+                              ),
+                              borderRadius: BorderRadius.circular(5),
+                            ),
+                            margin: const EdgeInsets.only(bottom: 8),
+                            child: GestureDetector(
+                              onTap: () async {
+                                await d.connect();
+                                var servicesDiscovered =
+                                    await d.discoverServices();
+                                setState(() {
+                                  _selectedBleDevice = d;
+                                  _serviceDiscovered = servicesDiscovered;
+                                });
+                              },
+                              child: ListTile(
+                                textColor: Colors.white,
+                                title: Text(d.name),
+                                trailing: StreamBuilder<BluetoothDeviceState>(
+                                  stream: d.state,
+                                  initialData:
+                                      BluetoothDeviceState.disconnected,
+                                  builder: (c, cSnapshot) {
+                                    switch (snapshot.data) {
+                                      case BluetoothDeviceState.connected:
+                                        return const Icon(
+                                          Icons.bluetooth_connected_rounded,
+                                          color: Colors.greenAccent,
+                                        );
+                                      default:
+                                        if (_selectedBleDevice != null) {
+                                          setState(() {
+                                            _selectedBleDevice = null;
+                                            _serviceDiscovered = null;
+                                          });
+                                        }
+                                        return const Icon(
+                                          Icons.bluetooth_disabled_rounded,
+                                          color: Colors.grey,
+                                        );
+                                    }
+                                  },
                                 ),
                               ),
                             ),
-                          ];
-
-                          for (var d
-                              in devices.where((d) => d.device.name != '')) {
-                            widgets.add(Container(
-                              decoration: BoxDecoration(
-                                border: Border.all(
-                                  color: Colors.white,
-                                  width: 3,
-                                ),
-                                borderRadius: BorderRadius.circular(5),
-                              ),
-                              margin: const EdgeInsets.only(bottom: 8),
-                              child: GestureDetector(
-                                onTap: () async {
-                                  await d.device.connect();
-                                  var servicesDiscovered =
-                                      await d.device.discoverServices();
-                                  setState(() {
-                                    _selectedBleDevice = d.device;
-                                    _serviceDiscovered = servicesDiscovered;
-                                  });
-                                },
-                                child: ListTile(
-                                  textColor: Colors.white,
-                                  title: Text(d.device.name),
-                                  trailing: StreamBuilder<BluetoothDeviceState>(
-                                    stream: d.device.state,
-                                    initialData:
-                                        BluetoothDeviceState.disconnected,
-                                    builder: (c, cSnapshot) {
-                                      switch (snapshot.data) {
-                                        case BluetoothDeviceState.connected:
-                                          return const Icon(
-                                            Icons.bluetooth_connected_rounded,
-                                            color: Colors.greenAccent,
-                                          );
-                                        default:
-                                          if (_selectedBleDevice != null) {
-                                            setState(() {
-                                              _selectedBleDevice = null;
-                                              _serviceDiscovered = null;
-                                            });
-                                          }
-                                          return const Icon(
-                                            Icons.bluetooth_disabled_rounded,
-                                            color: Colors.grey,
-                                          );
-                                      }
-                                    },
-                                  ),
-                                ),
-                              ),
-                            ));
-                          }
-
-                          return Column(
-                            children: widgets,
-                          );
-                        }
-                        return const Center(
-                          child: Text('No device found!'),
-                        );
-                      default:
-                        return Center(
-                          child: Column(
-                            children: const [
-                              Padding(
-                                padding: EdgeInsets.all(20.0),
-                                child: Text(
-                                  '... getting devices',
-                                  style: TextStyle(
-                                    color: Colors.greenAccent,
-                                  ),
-                                ),
-                              ),
-                              CircularProgressIndicator(
-                                color: Colors.white70,
-                              ),
-                            ],
                           ),
                         );
+                      }
+                      return Column(
+                        children: widgets,
+                      );
+                    } else {
+                      return const Center(
+                        child: Text('No device found!'),
+                      );
                     }
-                  },
-                );
-              }
-            },
-          )
-        : Column(
-            children: [
-              Padding(
-                padding: const EdgeInsets.only(top: 40.0),
-                child: Column(
-                  children: [
-                    Text('connected to ${_selectedBleDevice!.name}...'),
-                    const SizedBox(height: 20.0),
-                    ElevatedButton(
-                      style: ElevatedButton.styleFrom(
-                        padding: const EdgeInsets.all(20.0),
-                        backgroundColor: Colors.redAccent,
-                        tapTargetSize: MaterialTapTargetSize.shrinkWrap,
-                      ),
-                      onPressed: () async {
-                        await _selectedBleDevice?.disconnect();
-                        setState(() {
-                          _selectedBleDevice = null;
-                          _serviceDiscovered = null;
-                        });
-                      },
-                      child: Text(
-                        'Disconnect from ${_selectedBleDevice!.name}',
-                      ),
-                    ),
-                    const SizedBox(height: 60.0),
-                    ElevatedButton(
-                      onPressed: () {
-                        widget.callback(
-                            true, _selectedBleDevice, _serviceDiscovered);
-                      },
-                      style: ElevatedButton.styleFrom(
-                        padding: const EdgeInsets.all(30.0),
-                        textStyle: const TextStyle(
-                          fontSize: 20.0,
-                        ),
-                      ),
-                      child: Row(
-                        crossAxisAlignment: CrossAxisAlignment.center,
-                        mainAxisAlignment: MainAxisAlignment.center,
+                  default:
+                    return Center(
+                      child: Column(
                         children: const [
-                          Icon(Icons.check_circle_outline_rounded),
-                          SizedBox(
-                            width: 10.0,
+                          Padding(
+                            padding: EdgeInsets.all(20.0),
+                            child: Text(
+                              '... getting devices',
+                              style: TextStyle(
+                                color: Colors.greenAccent,
+                              ),
+                            ),
                           ),
-                          Text(
-                            'Begin workout routine!',
-                            textAlign: TextAlign.center,
+                          CircularProgressIndicator(
+                            color: Colors.white70,
                           ),
                         ],
                       ),
-                    ),
-                  ],
+                    );
+                }
+              },
+            );
+          }
+        },
+      );
+    } else {
+      return Column(
+        children: [
+          Padding(
+            padding: const EdgeInsets.only(top: 40.0),
+            child: Column(
+              children: [
+                Text('connected to ${_selectedBleDevice!.name}...'),
+                const SizedBox(height: 20.0),
+                ElevatedButton(
+                  style: ElevatedButton.styleFrom(
+                    padding: const EdgeInsets.all(20.0),
+                    backgroundColor: Colors.redAccent,
+                    tapTargetSize: MaterialTapTargetSize.shrinkWrap,
+                  ),
+                  onPressed: () async {
+                    await _selectedBleDevice?.disconnect();
+                    setState(() {
+                      _selectedBleDevice = null;
+                      _serviceDiscovered = null;
+                    });
+                  },
+                  child: Text(
+                    'Disconnect from ${_selectedBleDevice!.name}',
+                  ),
                 ),
-              ),
-            ],
-          );
+                const SizedBox(height: 60.0),
+                ElevatedButton(
+                  onPressed: () {
+                    widget.callback(
+                        true, _selectedBleDevice, _serviceDiscovered);
+                  },
+                  style: ElevatedButton.styleFrom(
+                    padding: const EdgeInsets.all(30.0),
+                    textStyle: const TextStyle(
+                      fontSize: 20.0,
+                    ),
+                  ),
+                  child: Row(
+                    crossAxisAlignment: CrossAxisAlignment.center,
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: const [
+                      Icon(Icons.check_circle_outline_rounded),
+                      SizedBox(
+                        width: 10.0,
+                      ),
+                      Text(
+                        'Begin workout routine!',
+                        textAlign: TextAlign.center,
+                      ),
+                    ],
+                  ),
+                ),
+              ],
+            ),
+          ),
+        ],
+      );
+    }
   }
 }
 

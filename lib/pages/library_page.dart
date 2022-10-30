@@ -1,15 +1,14 @@
 import 'package:floating_action_bubble/floating_action_bubble.dart';
 import 'package:flutter/material.dart';
+import 'package:woa/components/menu.dart';
+import 'package:woa/components/workout_list_view.dart';
+import 'package:woa/constants/routes.dart';
 import 'package:woa/pages/test_ble.dart';
 import 'package:woa/pages/view_routine_page.dart';
+import 'package:woa/services/auth/auth_service.dart';
 import 'package:woa/services/cloud/cloud_workout.dart';
 import 'package:woa/services/cloud/firebase_cloud_storage.dart';
-
-import '../components/menu.dart';
-import '../components/workout_list_view.dart';
-import '../constants/routes.dart';
-import '../services/auth/auth_service.dart';
-import '../utils.dart';
+import 'package:woa/utils.dart';
 
 class LibraryPage extends StatefulWidget {
   const LibraryPage({Key? key}) : super(key: key);
@@ -126,8 +125,10 @@ class _LibraryPageState extends State<LibraryPage>
             titleStyle: const TextStyle(fontSize: 13, color: Colors.white),
             bubbleColor: Colors.green.shade500,
             onPress: () {
-              Navigator.push(context,
-                  MaterialPageRoute(builder: (context) => const FlutterBlueApp()));
+              Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                      builder: (context) => const FlutterBlueApp()));
             },
           ),
           Bubble(
