@@ -1,3 +1,4 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:floating_action_bubble/floating_action_bubble.dart';
 import 'package:flutter/material.dart';
 import 'package:woa/components/menu.dart';
@@ -6,8 +7,6 @@ import 'package:woa/constants/routes.dart';
 import 'package:woa/pages/test_ble.dart';
 import 'package:woa/pages/view_routine_page.dart';
 import 'package:woa/services/auth/auth_service.dart';
-import 'package:woa/services/cloud/cloud_workout.dart';
-import 'package:woa/services/cloud/firebase_cloud_storage.dart';
 import 'package:woa/utils.dart';
 
 class LibraryPage extends StatefulWidget {
@@ -21,16 +20,12 @@ class _LibraryPageState extends State<LibraryPage>
     with SingleTickerProviderStateMixin {
   late Animation<double> _animation;
   late AnimationController _animationController;
-  late Stream<Iterable<CloudWorkout>> _allWorkoutStream;
 
-  late final FirebaseCloudStorage _workoutService;
   final user = AuthService.firebase().currentUser!;
   String get userId => user.id;
 
   @override
   void initState() {
-    _workoutService = FirebaseCloudStorage();
-    _allWorkoutStream = _workoutService.allWorkouts(ownerUserId: userId);
     _animationController = AnimationController(
       vsync: this,
       duration: const Duration(milliseconds: 260),
@@ -53,6 +48,7 @@ class _LibraryPageState extends State<LibraryPage>
       appBar: AppBar(
         automaticallyImplyLeading: false,
         elevation: 0.0,
+        scrolledUnderElevation: 0.5,
         centerTitle: false,
         titleSpacing: 0,
         title: Padding(
@@ -77,42 +73,20 @@ class _LibraryPageState extends State<LibraryPage>
           ),
         ),
       ),
-      body: StreamBuilder(
-        stream: _allWorkoutStream,
-        builder: (context, snapshot) {
-          switch (snapshot.connectionState) {
-            case ConnectionState.waiting:
-            case ConnectionState.active:
-              if (snapshot.hasError) {
-                return const Text('Something broke!');
-              }
-              if (snapshot.hasData) {
-                final allWorkouts = snapshot.data as Iterable<CloudWorkout>;
-                return WorkoutListView(
-                    workouts: allWorkouts,
-                    onTap: (workout) {
-                      Navigator.pushNamed(context, viewRoutine,
-                          arguments:
-                              RoutineArguments(workoutId: workout.documentId));
-                    },
-                    onDelete: (workout) async {
-                      await _workoutService.deleteWorkout(
-                          documentId: workout.documentId);
-                    });
-              } else {
-                return const Center(
-                  child: CircularProgressIndicator(
-                    color: Colors.white,
-                  ),
-                );
-              }
-            default:
-              return const Center(
-                child: CircularProgressIndicator(
-                  color: Colors.white,
-                ),
-              );
-          }
+      body: WorkoutListView(
+        userId: userId,
+        onTap: (workout) {
+          Navigator.pushNamed(
+            context,
+            viewRoutine,
+            arguments: RoutineArguments(workoutId: workout.documentId),
+          );
+        },
+        onDelete: (workout) async {
+          await FirebaseFirestore.instance
+              .collection('workouts')
+              .doc(workout.documentId)
+              .delete();
         },
       ),
       drawer: const NavigationDrawer(),

@@ -32,24 +32,47 @@ class FirebaseCloudStorage {
     }
   }
 
-  Stream<Iterable<CloudWorkout>> allWorkouts({required String ownerUserId}) =>
-      workouts.snapshots().map((event) => event.docs
-          .map((doc) => CloudWorkout.fromSnapshot(doc))
-          .where((workout) => workout.ownerUserId == ownerUserId));
+  // Stream<Iterable<CloudWorkout>> allWorkouts(
+  //     {required String ownerUserId,
+  //     Map? listPaginationData,
+  //     DocumentSnapshot? lastDocumentSnapshot}) {
+  //   Map pagination = listPaginationData ??
+  //       {
+  //         'page': 1,
+  //         'perPage': 5,
+  //       };
+  //
+  //   var query = workouts
+  //       .limit(pagination['perPage'])
+  //       .where('user_id', isEqualTo: ownerUserId);
+  //   if (pagination['page'] > 1 && lastDocumentSnapshot != null) {
+  //     query = query.startAfterDocument(lastDocumentSnapshot);
+  //   }
+  //
+  //   return query.snapshots().map(
+  //       (event) => event.docs.map((doc) => CloudWorkout.fromSnapshot(doc)));
+  //   // return query.snapshots().map((event) => event.docs
+  //   //     .map((doc) => CloudWorkout.fromSnapshot(doc))
+  //   //     .where((workout) => workout.ownerUserId == ownerUserId));
+  // }
 
-  Future<Iterable<CloudWorkout>> getWorkouts({
-    required String ownerUserId,
-  }) async {
+  Future<QuerySnapshot> getWorkouts(
+      {required String ownerUserId,
+      required int documentLimit,
+      DocumentSnapshot? startAfter}) async {
     try {
-      return await workouts
+      final refWorkouts = workouts
           .where(
             workoutOwnerUserId,
             isEqualTo: ownerUserId,
           )
-          .get()
-          .then(
-            (value) => value.docs.map((doc) => CloudWorkout.fromSnapshot(doc)),
-          );
+          .limit(documentLimit);
+
+      if (startAfter == null) {
+        return refWorkouts.get();
+      } else {
+        return refWorkouts.startAfterDocument(startAfter).get();
+      }
     } catch (e) {
       throw CouldNotGetAllWorkoutException();
     }
