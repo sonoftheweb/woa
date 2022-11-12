@@ -20,13 +20,17 @@ class _PulseTimerState extends State<PulseTimer> {
     _pulseTimeTicker = 0;
     _pulseTimer = Timer.periodic(const Duration(seconds: 1), (timer) {
       if (_pulseTimeTicker >= widget.pulseTime) {
-        setState(() {
-          _pulseTimeTicker = 0;
-        });
+        if (mounted) {
+          setState(() {
+            _pulseTimeTicker = 0;
+          });
+        }
       } else {
-        setState(() {
-          _pulseTimeTicker += 1;
-        });
+        if (mounted) {
+          setState(() {
+            _pulseTimeTicker += 1;
+          });
+        }
       }
     });
 
@@ -35,6 +39,17 @@ class _PulseTimerState extends State<PulseTimer> {
 
   @override
   Widget build(BuildContext context) {
-    return Text('$_pulseTimeTicker');
+    return Column(
+      children: [
+        const Text(
+          'Pulse timer',
+          style: TextStyle(
+            fontSize: 14.0,
+            fontWeight: FontWeight.w100,
+          ),
+        ),
+        Text('$_pulseTimeTicker'),
+      ],
+    );
   }
 }

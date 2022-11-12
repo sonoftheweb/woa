@@ -6,6 +6,7 @@ import 'cloud_workout.dart';
 
 class FirebaseCloudStorage {
   final workouts = FirebaseFirestore.instance.collection('workouts');
+  final workoutStats = FirebaseFirestore.instance.collection('workoutStats');
 
   Future<void> deleteWorkout({required String documentId}) async {
     try {

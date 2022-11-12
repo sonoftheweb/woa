@@ -5,16 +5,17 @@ import 'package:app_settings/app_settings.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_blue/flutter_blue.dart';
 import 'package:permission_handler/permission_handler.dart';
-import 'package:woa/enums/power_modes.dart';
 import 'package:woa/pages/routine_work.dart';
 import 'package:woa/services/auth/auth_service.dart';
 import 'package:woa/services/cloud/cloud_workout.dart';
 import 'package:woa/services/cloud/firebase_cloud_storage.dart';
 import 'package:woa/utils.dart';
 
+import '../components/charts/spline.dart';
 import '../components/dialogs.dart';
 import '../constants/devices_and_services.dart';
 import '../constants/routes.dart';
+import '../enums/power_modes.dart';
 
 class RoutineArguments {
   final String workoutId;
@@ -136,6 +137,8 @@ class _ViewRoutinePageState extends State<ViewRoutinePage> {
       CloudWorkout? workout = _workout;
       Map<String, dynamic> settings = json.decode(workout!.settings!);
       Map<String, dynamic> areas = json.decode(workout.areas!);
+      int areasTrainable =
+          areas.entries.where((a) => a.value != 0).toList().length;
       return Scaffold(
         appBar: AppBar(
           elevation: 0,
@@ -152,234 +155,259 @@ class _ViewRoutinePageState extends State<ViewRoutinePage> {
                 left: 20.0,
                 right: 20,
               ),
-              decoration: BoxDecoration(
-                color: const Color.fromRGBO(27, 26, 41, 0.2),
-                borderRadius: BorderRadius.circular(20.0),
-              ),
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 mainAxisAlignment: MainAxisAlignment.start,
                 children: [
-                  Padding(
-                    padding: const EdgeInsets.only(
-                      top: 30,
-                      left: 30,
-                      right: 30,
+                  const Text(
+                    'Activity in last 5 days',
+                    style: TextStyle(
+                      fontSize: 20,
                     ),
-                    child: Column(
-                      children: [
-                        Padding(
-                          padding: const EdgeInsets.only(
-                            top: 10.0,
-                          ),
-                          child: Column(
-                            crossAxisAlignment: CrossAxisAlignment.center,
-                            mainAxisAlignment: MainAxisAlignment.center,
-                            children: [
-                              const Icon(
-                                Icons.punch_clock_rounded,
-                                size: 50.0,
-                              ),
-                              const Text(
-                                '20.0',
-                                style: TextStyle(
-                                  fontSize: 70.0,
-                                  fontWeight: FontWeight.bold,
-                                ),
-                              ),
-                              const Text(
-                                'Train time in minutes',
-                                style: TextStyle(
-                                  fontSize: 11.0,
-                                  fontWeight: FontWeight.w100,
-                                ),
-                              ),
-                              const SizedBox(height: 40.0),
-                              Padding(
-                                padding: const EdgeInsets.only(bottom: 30.0),
-                                child: Row(
-                                  mainAxisAlignment:
-                                      MainAxisAlignment.spaceBetween,
-                                  children: [
-                                    Column(
-                                      children: [
-                                        const Icon(Icons.settings, size: 30),
-                                        const SizedBox(height: 10.0),
-                                        Text(
-                                          camelToNormal(PowerModes.values[
-                                                      int.parse(
-                                                          settings['mode'])]
-                                                  .toString()
-                                                  .substring(11))
-                                              .toUpperCase(),
-                                          style: const TextStyle(
-                                            fontSize: 12,
-                                            fontWeight: FontWeight.bold,
-                                          ),
-                                        ),
-                                        const Text(
-                                          'workout mode',
-                                          style: TextStyle(
-                                            fontSize: 10,
-                                            fontWeight: FontWeight.w100,
-                                          ),
-                                        )
-                                      ],
-                                    ),
-                                    Column(
-                                      children: const [
-                                        Icon(Icons.fireplace_rounded, size: 60),
-                                        SizedBox(height: 10.0),
-                                        Text(
-                                          '250 kcal',
-                                          style: TextStyle(
-                                            fontSize: 30,
-                                            fontWeight: FontWeight.bold,
-                                          ),
-                                        ),
-                                        Text(
-                                          'Calories to be burnt',
-                                          style: TextStyle(
-                                            fontSize: 10,
-                                            fontWeight: FontWeight.w100,
-                                          ),
-                                        ),
-                                      ],
-                                    ),
-                                    Column(
-                                      children: const [
-                                        Icon(Icons.watch_rounded, size: 30),
-                                        SizedBox(height: 10.0),
-                                        Text(
-                                          'Enabled',
-                                          style: TextStyle(
-                                            fontSize: 12,
-                                            fontWeight: FontWeight.bold,
-                                          ),
-                                        ),
-                                        Text(
-                                          'external devices',
-                                          style: TextStyle(
-                                            fontSize: 10,
-                                            fontWeight: FontWeight.w100,
-                                          ),
-                                        )
-                                      ],
-                                    ),
-                                  ],
-                                ),
-                              )
-                            ],
-                          ),
+                  ),
+                  const SizedBox(height: 10),
+                  Container(
+                    height: 200,
+                    padding: const EdgeInsets.all(15.0),
+                    decoration: BoxDecoration(
+                      color: Colors.blue.shade500,
+                      borderRadius: BorderRadius.circular(10.0),
+                      boxShadow: [
+                        BoxShadow(
+                          color: Colors.grey.shade900,
+                        )
+                      ],
+                    ),
+                    child: AnimatedSplineChart(
+                      chartData: [
+                        ChartData("Mon", 19),
+                        ChartData("Tue", 12),
+                        ChartData("Wed", 17),
+                        ChartData("Thur", 11),
+                        ChartData("Fri", 14),
+                      ],
+                    ),
+                  ),
+                  const SizedBox(height: 10),
+                  const Text(
+                    'Workout attributes',
+                    style: TextStyle(
+                      fontSize: 20,
+                    ),
+                  ),
+                  const SizedBox(height: 10),
+                  Row(
+                    mainAxisSize: MainAxisSize.max,
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Container(
+                        width: MediaQuery.of(context).size.width / 2,
+                        margin: const EdgeInsets.only(right: 10),
+                        padding: const EdgeInsets.all(15.0),
+                        decoration: BoxDecoration(
+                          color: Colors.blue.shade500,
+                          borderRadius: BorderRadius.circular(10.0),
                         ),
-                        (_device != null)
-                            ? Column(
-                                children: [
-                                  Padding(
-                                    padding: const EdgeInsets.only(top: 40.0),
-                                    child: Column(
-                                      children: [
-                                        Text(
-                                            'connected to ${_device!.name}...'),
-                                        const SizedBox(height: 20.0),
-                                        ElevatedButton(
-                                          style: ElevatedButton.styleFrom(
-                                            padding: const EdgeInsets.all(20.0),
-                                            backgroundColor: Colors.redAccent,
-                                            tapTargetSize: MaterialTapTargetSize
-                                                .shrinkWrap,
-                                          ),
-                                          onPressed: () async {
-                                            await _device?.disconnect();
-                                            setState(() {
-                                              _device = null;
-                                            });
-                                          },
-                                          child: Text(
-                                            'Disconnect from ${_device!.name}',
-                                          ),
-                                        ),
-                                        const SizedBox(height: 60.0),
-                                        ElevatedButton(
-                                          onPressed: () {
-                                            if (_device != null) {
-                                              Navigator.pushNamed(
-                                                context,
-                                                routineWork,
-                                                arguments: WorkRoutineArgument(
-                                                  workout: workout,
-                                                  device: _device!,
-                                                ),
-                                              );
-                                            }
-                                          },
-                                          style: ElevatedButton.styleFrom(
-                                            padding: const EdgeInsets.all(30.0),
-                                            textStyle: const TextStyle(
-                                              fontSize: 20.0,
-                                            ),
-                                          ),
-                                          child: Row(
-                                            crossAxisAlignment:
-                                                CrossAxisAlignment.center,
-                                            mainAxisAlignment:
-                                                MainAxisAlignment.center,
-                                            children: const [
-                                              Icon(Icons
-                                                  .check_circle_outline_rounded),
-                                              SizedBox(
-                                                width: 10.0,
-                                              ),
-                                              Text(
-                                                'Begin workout routine!',
-                                                textAlign: TextAlign.center,
-                                              ),
-                                            ],
-                                          ),
-                                        ),
-                                      ],
-                                    ),
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.center,
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          children: [
+                            const Icon(
+                              Icons.punch_clock_rounded,
+                              size: 30.0,
+                            ),
+                            Text(
+                              "${settings['trainTime']} mins",
+                              style: const TextStyle(
+                                fontSize: 40.0,
+                                fontWeight: FontWeight.bold,
+                              ),
+                            ),
+                            const Text(
+                              'Train time in minutes',
+                              style: TextStyle(
+                                fontSize: 11.0,
+                                fontWeight: FontWeight.w100,
+                              ),
+                            ),
+                          ],
+                        ),
+                      ),
+                      Column(
+                        children: [
+                          Container(
+                            width:
+                                (MediaQuery.of(context).size.width - 100) / 2,
+                            padding: const EdgeInsets.all(15.0),
+                            decoration: BoxDecoration(
+                              color: Colors.blue.shade500,
+                              borderRadius: BorderRadius.circular(10.0),
+                            ),
+                            child: Column(
+                              mainAxisAlignment: MainAxisAlignment.start,
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                Text(
+                                  camelToNormal(
+                                    PowerModes
+                                        .values[int.parse(settings['mode'])]
+                                        .toString()
+                                        .substring(11),
+                                  ).toUpperCase(),
+                                  style: const TextStyle(
+                                    fontSize: 12,
+                                    fontWeight: FontWeight.bold,
                                   ),
-                                ],
-                              )
-                            : StreamBuilder(
-                                stream: flutterBlue.state,
-                                initialData: BluetoothState.unknown,
-                                builder: (BuildContext context,
-                                    AsyncSnapshot<BluetoothState> snapshot) {
-                                  final state = snapshot.data;
-                                  if (state != BluetoothState.on) {
-                                    return BleIsOff(state: state);
-                                  } else {
-                                    return FutureBuilder(
-                                      future: FlutterBlue.instance.startScan(
-                                        timeout: const Duration(
-                                          seconds: 10,
+                                ),
+                                const Text(
+                                  'workout mode',
+                                  style: TextStyle(
+                                    fontSize: 10,
+                                    fontWeight: FontWeight.w100,
+                                  ),
+                                ),
+                              ],
+                            ),
+                          ),
+                          const SizedBox(height: 10),
+                          Container(
+                            width:
+                                (MediaQuery.of(context).size.width - 100) / 2,
+                            padding: const EdgeInsets.all(15.0),
+                            decoration: BoxDecoration(
+                              color: Colors.greenAccent,
+                              borderRadius: BorderRadius.circular(10.0),
+                            ),
+                            child: Text(
+                              '$areasTrainable trainable areas',
+                              style: TextStyle(
+                                color: Colors.grey.shade600,
+                                fontSize: 17,
+                                fontWeight: FontWeight.w500,
+                              ),
+                            ),
+                          ),
+                        ],
+                      ),
+                    ],
+                  ),
+                  Column(
+                    children: [
+                      const Padding(
+                        padding: EdgeInsets.only(
+                          top: 40.0,
+                        ),
+                      ),
+                      (_device != null)
+                          ? Column(
+                              children: [
+                                Padding(
+                                  padding: const EdgeInsets.only(top: 40.0),
+                                  child: Column(
+                                    children: [
+                                      Text('connected to ${_device!.name}...'),
+                                      const SizedBox(height: 20.0),
+                                      ElevatedButton(
+                                        style: ElevatedButton.styleFrom(
+                                          padding: const EdgeInsets.all(20.0),
+                                          backgroundColor: Colors.redAccent,
+                                          tapTargetSize:
+                                              MaterialTapTargetSize.shrinkWrap,
+                                        ),
+                                        onPressed: () async {
+                                          await _device?.disconnect();
+                                          setState(() {
+                                            _device = null;
+                                          });
+                                        },
+                                        child: Text(
+                                          'Disconnect from ${_device!.name}',
                                         ),
                                       ),
-                                      builder: (context, snapshot) {
-                                        switch (snapshot.connectionState) {
-                                          case ConnectionState.done:
-                                            if (snapshot.hasData) {
-                                              var devices =
-                                                  snapshot.data as List;
-                                              List<Widget> widgets = [
-                                                const Center(
-                                                  child: Padding(
-                                                    padding:
-                                                        EdgeInsets.all(20.0),
-                                                    child: Text(
-                                                      'Devices found',
-                                                      style: TextStyle(
-                                                        fontWeight:
-                                                            FontWeight.bold,
-                                                        fontSize: 18.0,
-                                                      ),
+                                      const SizedBox(height: 60.0),
+                                      ElevatedButton(
+                                        onPressed: () {
+                                          if (_device != null) {
+                                            Navigator.pushNamed(
+                                              context,
+                                              routineWork,
+                                              arguments: WorkRoutineArgument(
+                                                workout: workout,
+                                                device: _device!,
+                                              ),
+                                            );
+                                          }
+                                        },
+                                        style: ElevatedButton.styleFrom(
+                                          padding: const EdgeInsets.all(30.0),
+                                          textStyle: const TextStyle(
+                                            fontSize: 20.0,
+                                          ),
+                                        ),
+                                        child: Row(
+                                          crossAxisAlignment:
+                                              CrossAxisAlignment.center,
+                                          mainAxisAlignment:
+                                              MainAxisAlignment.center,
+                                          children: const [
+                                            Icon(Icons
+                                                .check_circle_outline_rounded),
+                                            SizedBox(
+                                              width: 10.0,
+                                            ),
+                                            Text(
+                                              'Begin workout routine!',
+                                              textAlign: TextAlign.center,
+                                            ),
+                                          ],
+                                        ),
+                                      ),
+                                    ],
+                                  ),
+                                ),
+                              ],
+                            )
+                          : StreamBuilder(
+                              stream: flutterBlue.state,
+                              initialData: BluetoothState.unknown,
+                              builder: (BuildContext context,
+                                  AsyncSnapshot<BluetoothState> snapshot) {
+                                final state = snapshot.data;
+                                if (state != BluetoothState.on) {
+                                  return BleIsOff(state: state);
+                                } else {
+                                  return FutureBuilder(
+                                    future: FlutterBlue.instance.startScan(
+                                      timeout: const Duration(
+                                        seconds: 10,
+                                      ),
+                                    ),
+                                    builder: (context, snapshot) {
+                                      switch (snapshot.connectionState) {
+                                        case ConnectionState.done:
+                                          if (snapshot.hasData) {
+                                            var devices = snapshot.data as List;
+                                            List<Widget> widgets = [
+                                              const Center(
+                                                child: Padding(
+                                                  padding: EdgeInsets.all(20.0),
+                                                  child: Text(
+                                                    'Devices found',
+                                                    style: TextStyle(
+                                                      fontWeight:
+                                                          FontWeight.bold,
+                                                      fontSize: 18.0,
                                                     ),
                                                   ),
                                                 ),
-                                              ];
+                                              ),
+                                            ];
 
+                                            if (devices
+                                                .where((d) =>
+                                                    d.device.name == deviceName)
+                                                .isNotEmpty) {
                                               for (var d in devices.where((d) =>
                                                   d.device.name ==
                                                   deviceName)) {
@@ -407,43 +435,62 @@ class _ViewRoutinePageState extends State<ViewRoutinePage> {
                                                   ),
                                                 ));
                                               }
-
-                                              return Column(
-                                                children: widgets,
+                                            } else {
+                                              widgets.add(
+                                                const SizedBox(height: 20),
+                                              );
+                                              widgets.add(
+                                                const Icon(
+                                                  Icons
+                                                      .bluetooth_disabled_rounded,
+                                                  size: 90.0,
+                                                ),
                                               );
                                             }
-                                            return const Center(
-                                              child: Text('No device found!'),
+
+                                            return Column(
+                                              children: widgets,
                                             );
-                                          default:
-                                            return Center(
-                                              child: Column(
-                                                children: const [
-                                                  Padding(
-                                                    padding:
-                                                        EdgeInsets.all(20.0),
-                                                    child: Text(
-                                                      '... getting devices',
-                                                      style: TextStyle(
-                                                        color:
-                                                            Colors.greenAccent,
-                                                      ),
+                                          }
+                                          return Center(
+                                            child: Column(
+                                              children: const [
+                                                Text('No device found!'),
+                                                SizedBox(height: 20),
+                                                Icon(
+                                                  Icons
+                                                      .bluetooth_disabled_rounded,
+                                                  size: 90.0,
+                                                ),
+                                              ],
+                                            ),
+                                          );
+                                        default:
+                                          return Center(
+                                            child: Column(
+                                              children: const [
+                                                Padding(
+                                                  padding: EdgeInsets.all(20.0),
+                                                  child: Text(
+                                                    '... getting devices',
+                                                    style: TextStyle(
+                                                      color: Colors.greenAccent,
                                                     ),
                                                   ),
-                                                  CircularProgressIndicator(
-                                                    color: Colors.white70,
-                                                  ),
-                                                ],
-                                              ),
-                                            );
-                                        }
-                                      },
-                                    );
-                                  }
-                                }),
-                      ],
-                    ),
-                  )
+                                                ),
+                                                CircularProgressIndicator(
+                                                  color: Colors.white70,
+                                                ),
+                                              ],
+                                            ),
+                                          );
+                                      }
+                                    },
+                                  );
+                                }
+                              }),
+                    ],
+                  ),
                 ],
               ),
             ),

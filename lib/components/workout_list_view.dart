@@ -33,6 +33,7 @@ class _WorkoutListViewState extends State<WorkoutListView> {
     queryWorkout = FirebaseFirestore.instance
         .collection('workouts')
         .where('user_id', isEqualTo: widget.userId)
+        .where('name', isNotEqualTo: '')
         .withConverter<CloudWorkout>(
           fromFirestore: (snapshot, _) =>
               CloudWorkout.fromJson(snapshot.id, snapshot.data()!),
@@ -67,7 +68,7 @@ class _WorkoutListViewState extends State<WorkoutListView> {
             background: deleteIcon,
             secondaryBackground: deleteIcon,
             confirmDismiss: (DismissDirection direction) async {
-              final shouldDelete = await showDeleteDialog(context);
+              final shouldDelete = await showDeleteDialog(context: context);
               if (shouldDelete) {
                 widget.onDelete(workout);
               }
