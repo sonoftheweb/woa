@@ -16,6 +16,7 @@ import '../components/dialogs.dart';
 import '../constants/devices_and_services.dart';
 import '../constants/routes.dart';
 import '../enums/power_modes.dart';
+import '../services/auth/auth_user.dart';
 
 class RoutineArguments {
   final String workoutId;
@@ -34,14 +35,21 @@ class ViewRoutinePage extends StatefulWidget {
 class _ViewRoutinePageState extends State<ViewRoutinePage> {
   late final FirebaseCloudStorage _workoutService;
   late Future<CloudWorkout?> _getCurrentWorkout;
+  late Future<Map<String, dynamic>> _getWorkoutStats;
   CloudWorkout? _workout;
+  Map<String, dynamic>? _workoutStats;
   FlutterBlue flutterBlue = FlutterBlue.instance;
   BluetoothDevice? _device;
+  late AuthUser? user;
+  late Future? _scanFuture;
 
   @override
   void initState() {
+    _scanFuture = beginScan();
+    user = AuthService.firebase().currentUser;
     _workoutService = FirebaseCloudStorage();
     _getCurrentWorkout = getCurrentWorkout(widget.args.workoutId);
+    _getWorkoutStats = getStats(widget.args.workoutId);
     super.initState();
   }
 
@@ -51,6 +59,21 @@ class _ViewRoutinePageState extends State<ViewRoutinePage> {
       _device = null;
     });
     super.dispose();
+  }
+
+  Future beginScan() => FlutterBlue.instance.startScan(
+        timeout: const Duration(
+          seconds: 10,
+        ),
+      );
+
+  Future<Map<String, dynamic>> getStats(workoutId) async {
+    final stat = await _workoutService.getLastXDaysStats(
+      workoutId: workoutId,
+      userId: user!.id,
+    );
+    _workoutStats = stat;
+    return stat;
   }
 
   Future<CloudWorkout?> getCurrentWorkout(workoutId) async {
@@ -106,8 +129,6 @@ class _ViewRoutinePageState extends State<ViewRoutinePage> {
   @override
   Widget build(BuildContext context) {
     requestPermissions(context);
-
-    final user = AuthService.firebase().currentUser;
     checkAuth(user, context);
 
     return FutureBuilder(
@@ -178,14 +199,56 @@ class _ViewRoutinePageState extends State<ViewRoutinePage> {
                         )
                       ],
                     ),
-                    child: AnimatedSplineChart(
-                      chartData: [
-                        ChartData("Mon", 19),
-                        ChartData("Tue", 12),
-                        ChartData("Wed", 17),
-                        ChartData("Thur", 11),
-                        ChartData("Fri", 14),
-                      ],
+                    child: FutureBuilder(
+                      future: _getWorkoutStats,
+                      builder: (context, snapshot) {
+                        switch (snapshot.connectionState) {
+                          case ConnectionState.done:
+                            if (snapshot.hasError) {
+                              return const Center(
+                                child: Text(
+                                    'There was an error getting statistics.'),
+                              );
+                            }
+                            var values = _workoutStats!.values;
+                            var sum =
+                                values.reduce((sum, element) => sum + element);
+                            if (sum != 0) {
+                              String secondsOrMinutes = 's';
+
+                              for (var i = 0; i < values.length; i++) {
+                                var value = values.toList()[i];
+                                if (value > 60) {
+                                  secondsOrMinutes = 'm';
+                                  break;
+                                }
+                              }
+
+                              return AnimatedSplineChart(
+                                secondsOrMinutes: secondsOrMinutes,
+                                chartData: _workoutStats!.entries.map((stat) {
+                                  int statValue = stat.value;
+                                  if (secondsOrMinutes == 'm') {
+                                    statValue = (statValue / 60).floor();
+                                  }
+                                  return ChartData(stat.key, statValue);
+                                }).toList(),
+                              );
+                            } else {
+                              return const Center(
+                                child: Text(
+                                  'No data available for this workout. Push some iron?',
+                                ),
+                              );
+                            }
+                          default:
+                            return const Center(
+                              child: CircularProgressIndicator(
+                                color: Colors.white,
+                              ),
+                            );
+                        }
+                      },
                     ),
                   ),
                   const SizedBox(height: 10),
@@ -378,11 +441,7 @@ class _ViewRoutinePageState extends State<ViewRoutinePage> {
                                   return BleIsOff(state: state);
                                 } else {
                                   return FutureBuilder(
-                                    future: FlutterBlue.instance.startScan(
-                                      timeout: const Duration(
-                                        seconds: 10,
-                                      ),
-                                    ),
+                                    future: _scanFuture,
                                     builder: (context, snapshot) {
                                       switch (snapshot.connectionState) {
                                         case ConnectionState.done:
@@ -454,13 +513,29 @@ class _ViewRoutinePageState extends State<ViewRoutinePage> {
                                           }
                                           return Center(
                                             child: Column(
-                                              children: const [
-                                                Text('No device found!'),
-                                                SizedBox(height: 20),
-                                                Icon(
+                                              children: [
+                                                const Text('No device found!'),
+                                                const SizedBox(height: 20),
+                                                const Icon(
                                                   Icons
                                                       .bluetooth_disabled_rounded,
                                                   size: 90.0,
+                                                ),
+                                                const SizedBox(height: 20),
+                                                ElevatedButton(
+                                                  onPressed: () async {
+                                                    FlutterBlue.instance
+                                                        .stopScan()
+                                                        .then((_) {
+                                                      setState(() {
+                                                        _scanFuture = null;
+                                                        _scanFuture =
+                                                            beginScan();
+                                                      });
+                                                    });
+                                                  },
+                                                  child:
+                                                      const Text('Rescan...'),
                                                 ),
                                               ],
                                             ),

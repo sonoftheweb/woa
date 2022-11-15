@@ -3,8 +3,12 @@ import 'package:syncfusion_flutter_charts/charts.dart';
 
 class AnimatedSplineChart extends StatefulWidget {
   final List<ChartData> chartData;
-  const AnimatedSplineChart({Key? key, required this.chartData})
-      : super(key: key);
+  final String? secondsOrMinutes;
+  const AnimatedSplineChart({
+    Key? key,
+    required this.chartData,
+    this.secondsOrMinutes = 's',
+  }) : super(key: key);
 
   @override
   State<AnimatedSplineChart> createState() => _AnimatedSplineChartState();
@@ -47,7 +51,7 @@ class _AnimatedSplineChartState extends State<AnimatedSplineChart> {
         axisLine: const AxisLine(width: 0),
         borderColor: Colors.white,
         edgeLabelPlacement: EdgeLabelPlacement.shift,
-        labelFormat: '{value} m',
+        labelFormat: '{value} ${widget.secondsOrMinutes}',
         majorTickLines: const MajorTickLines(size: 1),
       ),
       series: _getDefaultSplineSeries(),

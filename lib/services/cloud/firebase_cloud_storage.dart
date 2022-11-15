@@ -1,5 +1,7 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:intl/intl.dart';
 import 'package:woa/services/cloud/cloud_storage_exceptions.dart';
+import 'package:woa/services/cloud/cloud_workout_stats.dart';
 
 import 'cloud_storage_constants.dart';
 import 'cloud_workout.dart';
@@ -129,6 +131,43 @@ class FirebaseCloudStorage {
     } else {
       throw CouldNotGetWorkoutException();
     }
+  }
+
+  Future<Map<String, dynamic>> getLastXDaysStats({
+    required String workoutId,
+    required String userId,
+    int? days,
+  }) async {
+    int dayCount = (days != null) ? days : 5;
+    final Map<String, dynamic> statDays = {};
+    final workoutStatRef = workoutStats.withConverter<WorkoutStat>(
+      fromFirestore: (snapshot, _) => WorkoutStat.fromJson(snapshot.data()!),
+      toFirestore: (workoutStat, _) => workoutStat.toJson(),
+    );
+
+    for (var i = dayCount; i >= 1; i--) {
+      int dayNum = i * (-1);
+      DateTime statDay = DateTime.now().add(Duration(days: dayNum));
+
+      List<QueryDocumentSnapshot<WorkoutStat>> statForDay = await workoutStatRef
+          .where(
+            'dateTrained',
+            isEqualTo: DateFormat('yyyy-MM-dd').format(statDay),
+          )
+          .where('userId', isEqualTo: userId)
+          .where('workoutId', isEqualTo: workoutId)
+          .get()
+          .then((snapshot) => snapshot.docs);
+
+      int sumForDay = 0;
+      for (QueryDocumentSnapshot<WorkoutStat> dayStat in statForDay) {
+        WorkoutStat data = dayStat.data();
+        sumForDay += data.trainTime;
+      }
+      statDays[DateFormat('EEEE').format(statDay)] = sumForDay;
+    }
+
+    return statDays;
   }
 
   static final FirebaseCloudStorage _shared =

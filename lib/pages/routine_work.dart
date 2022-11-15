@@ -4,6 +4,7 @@ import 'dart:convert';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_blue/flutter_blue.dart';
+import 'package:intl/intl.dart';
 import 'package:woa/components/WorkoutTimer.dart';
 import 'package:woa/components/pulse_timer.dart';
 import 'package:woa/components/simple_anumated_ripple.dart';
@@ -112,49 +113,49 @@ class _RoutineWorkState extends State<RoutineWork>
     // await writeServiceCharsFound!.write([168, 16, 184]);
 
     // // set frequency
-    // int freq = settings['frequency'];
-    // await writeServiceCharsFound!.write([168, 1, freq, 169 + freq]);
-    //
-    // // set pulse width
-    // int pulseWidth = settings['pulseWidth'];
-    // await writeServiceCharsFound!.write([168, 2, pulseWidth, 170 + pulseWidth]);
-    //
-    // // set pulse time
-    // int pulseTime = settings['pulseTime'];
-    // await writeServiceCharsFound!.write([168, 3, pulseTime, 171 + pulseTime]);
-    //
-    // // set mode
-    // int mode = settings['mode'];
-    // await writeServiceCharsFound!.write([168, 4, mode, 172 + mode]);
-    //
-    // // set train time
-    // await writeServiceCharsFound!.write([168, 5, trainTime, 173 + trainTime]);
-    //
-    // // trigger all the body stimulation start
-    // for (var element in areas.entries) {
-    //   String key = element.key;
-    //   int value = element.value;
-    //   int? channel = areasToChannelMap[key];
-    //   if (channel != null) {
-    //     if (value != 0) {
-    //       await writeServiceCharsFound!.write([
-    //         168,
-    //         6,
-    //         channel,
-    //         value,
-    //         174 + channel + value
-    //       ]); // enable the channel
-    //     } else {
-    //       await writeServiceCharsFound!.write([
-    //         168,
-    //         6,
-    //         channel,
-    //         0,
-    //         174 + channel + 0
-    //       ]); // ensure the channel stays disabled
-    //     }
-    //   }
-    // }
+    int freq = settings['frequency'];
+    await writeServiceCharsFound!.write([168, 1, freq, 169 + freq]);
+
+    // set pulse width
+    int pulseWidth = settings['pulseWidth'];
+    await writeServiceCharsFound!.write([168, 2, pulseWidth, 170 + pulseWidth]);
+
+    // set pulse time
+    int pulseTime = settings['pulseTime'];
+    await writeServiceCharsFound!.write([168, 3, pulseTime, 171 + pulseTime]);
+
+    // set mode
+    int mode = settings['mode'];
+    await writeServiceCharsFound!.write([168, 4, mode, 172 + mode]);
+
+    // set train time
+    await writeServiceCharsFound!.write([168, 5, trainTime, 173 + trainTime]);
+
+    // trigger all the body stimulation start
+    for (var element in areas.entries) {
+      String key = element.key;
+      int value = element.value;
+      int? channel = areasToChannelMap[key];
+      if (channel != null) {
+        if (value != 0) {
+          await writeServiceCharsFound!.write([
+            168,
+            6,
+            channel,
+            value,
+            174 + channel + value
+          ]); // enable the channel
+        } else {
+          await writeServiceCharsFound!.write([
+            168,
+            6,
+            channel,
+            0,
+            174 + channel + 0
+          ]); // ensure the channel stays disabled
+        }
+      }
+    }
   }
 
   Future<void> bluetoothServiceCharSetup() async {
@@ -609,7 +610,7 @@ class _RoutineWorkState extends State<RoutineWork>
       'userId': userId,
       'trainTime': trainedTime,
       'fullTrainTime': Duration(minutes: _trainTime).inSeconds,
-      'dateTrained': DateTime.now(),
+      'dateTrained': DateFormat('yyyy-MM-dd').format(DateTime.now()),
     });
   }
 

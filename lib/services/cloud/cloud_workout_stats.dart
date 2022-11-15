@@ -3,7 +3,7 @@ class WorkoutStat {
   final String userId;
   final int trainTime;
   final int fullTrainTime;
-  final DateTime dateTrained;
+  final String dateTrained;
 
   WorkoutStat({
     required this.workoutId,
@@ -19,7 +19,7 @@ class WorkoutStat {
           userId: json['userId']! as String,
           trainTime: json['trainTime']! as int,
           fullTrainTime: json['fullTrainTime']! as int,
-          dateTrained: json['dateTrained']! as DateTime,
+          dateTrained: json['dateTrained']! as String,
         );
 
   Map<String, Object?> toJson() {
