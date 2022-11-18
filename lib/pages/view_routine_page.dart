@@ -170,9 +170,8 @@ class _ViewRoutinePageState extends State<ViewRoutinePage> {
           child: SingleChildScrollView(
             child: Container(
               height: MediaQuery.of(context).size.height - 200,
-              padding: const EdgeInsets.only(top: 10.0),
               margin: const EdgeInsets.only(
-                top: 30.0,
+                top: 5.0,
                 left: 20.0,
                 right: 20,
               ),
@@ -183,13 +182,13 @@ class _ViewRoutinePageState extends State<ViewRoutinePage> {
                   const Text(
                     'Activity in last 5 days',
                     style: TextStyle(
-                      fontSize: 20,
+                      fontSize: 14,
                     ),
                   ),
                   const SizedBox(height: 10),
                   Container(
-                    height: 200,
-                    padding: const EdgeInsets.all(15.0),
+                    height: 150,
+                    padding: const EdgeInsets.all(10.0),
                     decoration: BoxDecoration(
                       color: Colors.blue.shade500,
                       borderRadius: BorderRadius.circular(10.0),
@@ -251,11 +250,11 @@ class _ViewRoutinePageState extends State<ViewRoutinePage> {
                       },
                     ),
                   ),
-                  const SizedBox(height: 10),
+                  const SizedBox(height: 20),
                   const Text(
                     'Workout attributes',
                     style: TextStyle(
-                      fontSize: 20,
+                      fontSize: 14,
                     ),
                   ),
                   const SizedBox(height: 10),
@@ -283,7 +282,7 @@ class _ViewRoutinePageState extends State<ViewRoutinePage> {
                             Text(
                               "${settings['trainTime']} mins",
                               style: const TextStyle(
-                                fontSize: 40.0,
+                                fontSize: 20.0,
                                 fontWeight: FontWeight.bold,
                               ),
                             ),
@@ -319,7 +318,7 @@ class _ViewRoutinePageState extends State<ViewRoutinePage> {
                                         .substring(11),
                                   ).toUpperCase(),
                                   style: const TextStyle(
-                                    fontSize: 12,
+                                    fontSize: 11,
                                     fontWeight: FontWeight.bold,
                                   ),
                                 ),
@@ -337,7 +336,7 @@ class _ViewRoutinePageState extends State<ViewRoutinePage> {
                           Container(
                             width:
                                 (MediaQuery.of(context).size.width - 100) / 2,
-                            padding: const EdgeInsets.all(15.0),
+                            padding: const EdgeInsets.all(8.0),
                             decoration: BoxDecoration(
                               color: Colors.greenAccent,
                               borderRadius: BorderRadius.circular(10.0),
@@ -346,7 +345,7 @@ class _ViewRoutinePageState extends State<ViewRoutinePage> {
                               '$areasTrainable trainable areas',
                               style: TextStyle(
                                 color: Colors.grey.shade600,
-                                fontSize: 17,
+                                fontSize: 12,
                                 fontWeight: FontWeight.w500,
                               ),
                             ),
@@ -366,7 +365,7 @@ class _ViewRoutinePageState extends State<ViewRoutinePage> {
                           ? Column(
                               children: [
                                 Padding(
-                                  padding: const EdgeInsets.only(top: 40.0),
+                                  padding: const EdgeInsets.only(top: 10.0),
                                   child: Column(
                                     children: [
                                       Text('connected to ${_device!.name}...'),
@@ -481,7 +480,8 @@ class _ViewRoutinePageState extends State<ViewRoutinePage> {
                                                             5),
                                                   ),
                                                   margin: const EdgeInsets.only(
-                                                      bottom: 8),
+                                                    bottom: 8,
+                                                  ),
                                                   child: GestureDetector(
                                                     onTap: () async {
                                                       await d.device.connect();
@@ -635,7 +635,7 @@ class BleIsOff extends StatelessWidget {
       child: Container(
         alignment: Alignment.center,
         width: MediaQuery.of(context).size.width,
-        height: MediaQuery.of(context).size.height - 860,
+        //height: MediaQuery.of(context).size.height - 860,
         decoration: BoxDecoration(
           color: Colors.redAccent,
           borderRadius: BorderRadius.circular(10.0),
